@@ -9,27 +9,24 @@ namespace ExamenCGastos.Controllers
     [Route("api/[controller]")]
     [Authorize]
     [ApiController]
-    public class InventarioController : ControllerBase
+    public class ProveedoresController : ControllerBase
     {
         private readonly CGASTOSContext _controlGastosContext;
 
-        public InventarioController(CGASTOSContext controlGastosContext)
+        public ProveedoresController(CGASTOSContext controlGastosContext)
         {
             _controlGastosContext = controlGastosContext;
         }
 
-        // GET: api/Inventario/Lista
+        // GET: api/Proveedores/ListaProveedores
         [HttpGet]
-        [Route("Lista")]
-        public async Task<IActionResult> Lista()
+        [Route("ListaProveedores")]
+        public async Task<IActionResult> ListaProveedores()
         {
             try
             {
-                var inventario = await _controlGastosContext.Inventarios
-                    .Include(i => i.Producto) // Incluir la relación con Producto si es necesaria
-                    .ToListAsync();
-
-                return Ok(new { value = inventario });
+                var proveedores = await _controlGastosContext.Proveedores.ToListAsync();
+                return StatusCode(StatusCodes.Status200OK, new { value = proveedores });
             }
             catch (Exception ex)
             {
@@ -38,22 +35,20 @@ namespace ExamenCGastos.Controllers
             }
         }
 
-        // GET: api/Inventario/5
+        // GET: api/Proveedores/5
         [HttpGet("{id}")]
         public async Task<IActionResult> ObtenerPorId(int id)
         {
             try
             {
-                var inventario = await _controlGastosContext.Inventarios
-                    .Include(i => i.Producto) // Incluir la relación con Producto si es necesaria
-                    .FirstOrDefaultAsync(i => i.Id == id);
+                var proveedor = await _controlGastosContext.Proveedores.FindAsync(id);
 
-                if (inventario == null)
+                if (proveedor == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(inventario);
+                return Ok(proveedor);
             }
             catch (Exception ex)
             {
@@ -62,9 +57,9 @@ namespace ExamenCGastos.Controllers
             }
         }
 
-        // POST: api/Inventario
+        // POST: api/Proveedores
         [HttpPost]
-        public async Task<IActionResult> Crear([FromBody] Inventario inventario)
+        public async Task<IActionResult> Crear([FromBody] Proveedor proveedor)
         {
             try
             {
@@ -73,10 +68,10 @@ namespace ExamenCGastos.Controllers
                     return BadRequest(ModelState);
                 }
 
-                _controlGastosContext.Inventarios.Add(inventario);
+                _controlGastosContext.Proveedores.Add(proveedor);
                 await _controlGastosContext.SaveChangesAsync();
 
-                return CreatedAtAction("ObtenerPorId", new { id = inventario.Id }, inventario);
+                return CreatedAtAction("ObtenerPorId", new { id = proveedor.Id }, proveedor);
             }
             catch (Exception ex)
             {
@@ -85,18 +80,18 @@ namespace ExamenCGastos.Controllers
             }
         }
 
-        // PUT: api/Inventario/5
+        // PUT: api/Proveedores/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Actualizar(int id, [FromBody] Inventario inventario)
+        public async Task<IActionResult> Actualizar(int id, [FromBody] Proveedor proveedor)
         {
             try
             {
-                if (id != inventario.Id)
+                if (id != proveedor.Id)
                 {
                     return BadRequest();
                 }
 
-                _controlGastosContext.Entry(inventario).State = EntityState.Modified;
+                _controlGastosContext.Entry(proveedor).State = EntityState.Modified;
 
                 try
                 {
@@ -104,7 +99,7 @@ namespace ExamenCGastos.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!InventarioExists(id))
+                    if (!ProveedorExists(id))
                     {
                         return NotFound();
                     }
@@ -123,19 +118,19 @@ namespace ExamenCGastos.Controllers
             }
         }
 
-        // DELETE: api/Inventario/5
+        // DELETE: api/Proveedores/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Eliminar(int id)
         {
             try
             {
-                var inventario = await _controlGastosContext.Inventarios.FindAsync(id);
-                if (inventario == null)
+                var proveedor = await _controlGastosContext.Proveedores.FindAsync(id);
+                if (proveedor == null)
                 {
                     return NotFound();
                 }
 
-                _controlGastosContext.Inventarios.Remove(inventario);
+                _controlGastosContext.Proveedores.Remove(proveedor);
                 await _controlGastosContext.SaveChangesAsync();
 
                 return NoContent();
@@ -147,10 +142,9 @@ namespace ExamenCGastos.Controllers
             }
         }
 
-        private bool InventarioExists(int id)
+        private bool ProveedorExists(int id)
         {
-            return _controlGastosContext.Inventarios.Any(i => i.Id == id);
+            return _controlGastosContext.Proveedores.Any(e => e.Id == id);
         }
     }
 }
-//
