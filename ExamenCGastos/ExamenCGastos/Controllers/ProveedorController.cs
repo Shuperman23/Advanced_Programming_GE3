@@ -28,22 +28,12 @@ namespace ExamenCGastos.Controllers
 
         // GET: api/Proveedores/ListaProveedores
         [HttpGet]
-        [Route("ListaProveedores")]
-        public async Task<ActionResult<IEnumerable<ProveedorDto>>> ListaProveedores()
+        public async Task<ActionResult<IEnumerable<ProveedorDto>>> GetLibros()
         {
-            try
-            {
-                var proveedores = await _unitOfWork.Proveedor.GetProveedoresAsync();
-                var proveedoresMap = _mapper.Map<List<ProveedorDto>>(proveedores);
-                return proveedoresMap;
-                /*var proveedores = await _controlGastosContext.Proveedores.ToListAsync();
-                return StatusCode(StatusCodes.Status200OK, new { value = proveedores });*/
-            }
-            catch (Exception ex)
-            {
+            var libros = await _unitOfWork.Proveedor.GetProveedoresAsync();
 
-                throw;
-            }
+            var libroDtos = _mapper.Map<List<ProveedorDto>>(libros);
+            return libroDtos;
         }
 
         // GET: api/Proveedores/5
