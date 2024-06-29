@@ -9,7 +9,7 @@ namespace ExamenCGastos.Interfaces
     {
         Task<List<Proveedor>> GetProveedoresAsync();
         Task<Proveedor?> GetProveedorById(int idProveedor);
-        Task<StoredProcedureDto?> CreateNewProveedor(ProveedorDto resource);
-        Task<Proveedor> Update(Proveedor proveedor);
+        Task<StoredProcedureDto?> CreateNewProveedorAsync(ProveedorDto resource);
+        Task<StoredProcedureDto?> UpdateProveedorAsync(ProveedorDto resource);
     }
 }

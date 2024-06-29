@@ -7,7 +7,7 @@ namespace ExamenCGastos.Interfaces
     {
         Task<List<Producto>> GetProductosAsync();
         Task<Producto?> GetProductoById(int productoId);
-        Task<StoredProcedureDto?> CreateNewProducto(ProductoDto resource);
-        Task<Producto> Update(Producto producto);
+        Task<StoredProcedureDto?> CreateNewProductoAsync(ProductoDto resource);
+        Task<StoredProcedureDto?> UpdateProductoAsync(ProductoDto resource);
     }
 }

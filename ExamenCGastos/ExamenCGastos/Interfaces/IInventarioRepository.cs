@@ -7,7 +7,7 @@ namespace ExamenCGastos.Interfaces
     {
         Task<List<Inventario>> GetInventariosAsync();
         Task<Inventario?> GetInventarioById(int idMovimiento);
-        Task<StoredProcedureDto?> CreateNewInventario(InventarioDto resource);
-        Task<Inventario> Update(Inventario inventario);
+        Task<StoredProcedureDto?> CreateNewInventarioAsync(InventarioDto resource);
+        Task<StoredProcedureDto?> UpdateInventarioAsync(InventarioDto resource);
     }
 }

@@ -23,7 +23,7 @@ namespace ExamenCGastos.Repositories
             return await Context.Proveedores.FirstOrDefaultAsync(x => x.Id == idProveedor);
         }
 
-        public async Task<StoredProcedureDto?> CreateNewProveedor(ProveedorDto resource)
+        public async Task<StoredProcedureDto?> CreateNewProveedorAsync(ProveedorDto resource)
         {
             var paramNombre = new SqlParameter("@Nombre", resource.Nombre);
             var paramDireccion = new SqlParameter("@Direccion", resource.Direccion);
@@ -35,11 +35,17 @@ namespace ExamenCGastos.Repositories
             return responseSp.FirstOrDefault();
         }
 
-        public async Task<Proveedor> Update(Proveedor proveedor)
+        public async Task<StoredProcedureDto?> UpdateProveedorAsync(ProveedorDto resource)
         {
-            Context.Proveedores.Update(proveedor);
-            await Context.SaveChangesAsync();
-            return proveedor;
+            var paramIdProveedor = new SqlParameter("@Id", resource.IdProveedor);
+            var paramNombre = new SqlParameter("@Nombre", resource.Nombre);
+            var paramDireccion = new SqlParameter("@Direccion", resource.Direccion);
+            var paramTelefono = new SqlParameter("@TelefonoContacto", resource.TelefonoContacto);
+            var paramEmail = new SqlParameter("@EmailContacto", resource.EmailContacto);
+
+            var responseSp = await Context.Set<StoredProcedureDto>().FromSql($"EXECUTE [dbo].[spNewProveedor] {paramIdProveedor}, {paramNombre}, {paramDireccion}, {paramTelefono}, {paramEmail}").ToListAsync();
+
+            return responseSp.FirstOrDefault();
         }
     }
 }

@@ -9,9 +9,16 @@ namespace ExamenCGastos.Repositories
 
         private IParametroRepository _parametro = default!;
         private IUsuarioRepository _usuario = default!;
+        private IInventarioRepository _inventario = default!;
+        private IProductoRepository _producto = default!;
+        private IProveedorRepository _proveedor = default!;
 
         public IParametroRepository Parametro => _parametro ?? new ParametroRepository(_context);
         public IUsuarioRepository Usuario => _usuario ?? new UsuarioRepository(_context);
+        public IInventarioRepository Inventario => _inventario ?? new InventarioRepository(_context);
+        public IProductoRepository Producto => _producto ?? new ProductoRepository(_context);
+        public IProveedorRepository Proveedor => _proveedor ?? new ProveedorRepository(_context);
+
 
         public UnitOfWork(CGASTOSContext context)
         {

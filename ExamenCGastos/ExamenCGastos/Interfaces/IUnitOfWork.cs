@@ -5,15 +5,14 @@
 
         IUsuarioRepository Usuario { get; }
 
-        /// <summary>
-        /// Referencia a la interfaca de Parametro
-        /// </summary>
         IParametroRepository Parametro { get; }
 
-        /// <summary>
-        /// Para guardar cambios en BD
-        /// </summary>
-        /// <returns></returns>
+        IInventarioRepository Inventario { get; }
+
+        IProductoRepository Producto { get; }
+
+        IProveedorRepository Proveedor { get; }
+
         Task<int> SaveChangesAsync();
     }
 }
