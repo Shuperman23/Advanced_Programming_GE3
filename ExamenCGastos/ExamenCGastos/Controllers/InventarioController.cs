@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ExamenCGastos.Controllers
 {
-    [TypeFilter(typeof(ApiKeyAttribute))]
+    //[TypeFilter(typeof(ApiKeyAttribute))]
     [Route("api/[controller]")]
     [Authorize]
     [ApiController]

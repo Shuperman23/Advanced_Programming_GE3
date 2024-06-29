@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ExamenCGastos.DTOs;
 using ExamenCGastos.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -108,6 +109,11 @@ public partial class CGASTOSContext : DbContext
         });
 
         OnModelCreatingPartial(modelBuilder);
+
+        modelBuilder.Entity<StoredProcedureDto>(entity =>
+        {
+            entity.HasNoKey();
+        });
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
