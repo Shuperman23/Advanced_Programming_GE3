@@ -8,5 +8,4 @@
         public string? ErrorMessage { get; set; }
         public string? ErrorStackTrace { get; set; }
         public DateTime ErrorTimestamp { get; set; }
-    }
-}
+    }}
