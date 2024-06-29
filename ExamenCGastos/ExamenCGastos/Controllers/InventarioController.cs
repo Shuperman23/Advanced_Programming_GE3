@@ -118,7 +118,7 @@ namespace ExamenCGastos.Controllers
         }
 
         // PUT: api/Inventario/5
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<ActionResult<InventarioDto>> Actualizar(InventarioDto inventarioDto/*int id, [FromBody] Inventario inventario*/)
         {
             try

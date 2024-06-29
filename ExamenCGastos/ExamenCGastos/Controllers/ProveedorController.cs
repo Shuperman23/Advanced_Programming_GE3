@@ -102,7 +102,7 @@ namespace ExamenCGastos.Controllers
         }
 
         // PUT: api/Proveedores/5
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<ActionResult<ProveedorDto>> Actualizar(ProveedorDto proveedorDto)
         {
             try
