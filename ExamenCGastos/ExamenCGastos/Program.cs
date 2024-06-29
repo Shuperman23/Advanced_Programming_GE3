@@ -18,9 +18,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+// Agregar servicio del contenedor UnitOfWork
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<ApiKeyAttribute>();
-var startup = new Startup(builder.Configuration);
+
+
 builder.Services.AddDbContext<CGASTOSContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("CadenaSQL"));
@@ -28,7 +29,6 @@ builder.Services.AddDbContext<CGASTOSContext>(options =>
 
 builder.Services.AddSingleton<Utilities>();
 builder.Services.AddTransient<ConfiguracionEmail>();
-var app = builder.Build();
 
 builder.Services.AddAuthentication(config => {
     config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -57,6 +57,8 @@ builder.Services.AddCors(options =>
     });
 });
 
+var app = builder.Build();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -64,13 +66,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseCors("NewPolicy");
-
 app.UseAuthentication();
-
-app.UseMiddleware<ExceptionMiddleware>();
-
-app.UseHttpsRedirection();
-
 app.UseAuthorization();
 
 app.MapControllers();

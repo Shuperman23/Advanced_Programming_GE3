@@ -20,13 +20,15 @@ namespace ExamenCGastos
         {
             services.AddControllers();
 
-            // Configura el contexto de la base de datos utilizando SQL Server
+
             services.AddDbContext<CGASTOSContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("CadenaSQL")));
 
             // Servicios Singleton
             services.AddSingleton<Utilities>();
             services.AddTransient<ConfiguracionEmail>();
+            //   services.AddSingleton<EmailService>();
+
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options =>
@@ -52,28 +54,8 @@ namespace ExamenCGastos
                 });
             });
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPI", Version = "1.0.0.4" });
 
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    Array.Empty<string>()
-                }
-            });
-            });
-
-            // Configura AutoMapper
-            services.AddAutoMapper(typeof(Startup));
+            services.AddSwaggerGen();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -81,7 +63,7 @@ namespace ExamenCGastos
             if (env.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPI"); });
+                app.UseSwaggerUI();
             }
 
             app.UseMiddleware<Middleware.ExceptionMiddleware>();
@@ -91,6 +73,7 @@ namespace ExamenCGastos
 
             app.UseAuthentication();
             app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {
