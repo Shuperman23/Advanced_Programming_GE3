@@ -26,11 +26,11 @@ namespace ExamenCGastos.Repositories
         public async Task<StoredProcedureDto?> CreateNewProveedorAsync(ProveedorDto resource)
         {
             var paramNombre = new SqlParameter("@Nombre", resource.Nombre);
-            var paramDireccion = new SqlParameter("@Direccion", resource.Direccion);
             var paramTelefono = new SqlParameter("@TelefonoContacto", resource.TelefonoContacto);
             var paramEmail = new SqlParameter("@EmailContacto", resource.EmailContacto);
+            var paramDireccion = new SqlParameter("@Direccion", resource.Direccion);
 
-            var responseSp = await Context.Set<StoredProcedureDto>().FromSql($"EXECUTE [dbo].[spNewProveedor] {paramNombre}, {paramDireccion}, {paramTelefono}, {paramEmail}").ToListAsync();
+            var responseSp = await Context.Set<StoredProcedureDto>().FromSql($"EXECUTE [dbo].[spNewProveedor] {paramNombre}, {paramTelefono}, {paramEmail}, {paramDireccion}").ToListAsync();
 
             return responseSp.FirstOrDefault();
         }
@@ -39,11 +39,11 @@ namespace ExamenCGastos.Repositories
         {
             var paramIdProveedor = new SqlParameter("@Id", resource.Id);
             var paramNombre = new SqlParameter("@Nombre", resource.Nombre);
-            var paramDireccion = new SqlParameter("@Direccion", resource.Direccion);
             var paramTelefono = new SqlParameter("@TelefonoContacto", resource.TelefonoContacto);
             var paramEmail = new SqlParameter("@EmailContacto", resource.EmailContacto);
+            var paramDireccion = new SqlParameter("@Direccion", resource.Direccion);
 
-            var responseSp = await Context.Set<StoredProcedureDto>().FromSql($"EXECUTE [dbo].[spUpdateProveedor] {paramIdProveedor}, {paramNombre}, {paramDireccion}, {paramTelefono}, {paramEmail}").ToListAsync();
+            var responseSp = await Context.Set<StoredProcedureDto>().FromSql($"EXECUTE [dbo].[spUpdateProveedor] {paramIdProveedor}, {paramNombre}, {paramTelefono}, {paramEmail}, {paramDireccion}").ToListAsync();
 
             return responseSp.FirstOrDefault();
         }
