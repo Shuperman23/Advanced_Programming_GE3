@@ -3,8 +3,8 @@
     public class UsuarioDTO
     {
         public int IdUsuario { get; set; }
-        public string Nombre { get; set; } = string.Empty;
-        public string Correo { get; set; } = string.Empty;
-        public string Clave { get; set; } = string.Empty;
+        public string? Nombre { get; set; }
+        public string? Correo { get; set; }
+        public string? Clave { get; set; }
     }
 }
