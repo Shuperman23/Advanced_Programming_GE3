@@ -1,4 +1,5 @@
 ﻿using ExamenCGastos.Data;
+using ExamenCGastos.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -8,20 +9,31 @@ using System.Text;
 namespace ExamenCGastos
 {
     public class Startup
-    {
-        public IConfiguration Configuration { get; }
-
-        public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
-        }
+            // Constructor de la clase Startup que recibe IConfiguration como parámetro
+            public Startup(IConfiguration configuration)
+            {
+                Configuration = configuration;
+            }
 
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddControllers();
+            // Propiedad de solo lectura para acceder a la configuración de la aplicación
+            public IConfiguration Configuration { get; }
 
+            // Método para configurar los servicios de la aplicación
+            public void ConfigureServices(IServiceCollection services)
+            {
+                // Agrega la política CORS para permitir peticiones desde cualquier origen
+                services.AddCors();
 
-            services.AddDbContext<CGASTOSContext>(options =>
+                // Configura las opciones de serialización JSON para evitar referencias circulares
+                services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
+
+                // Agrega la generación de documentación Swagger
+                services.AddEndpointsApiExplorer();
+
+                // Configura el contexto de la base de datos utilizando SQL Server
+                services.AddDbContext<CGASTOSContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("CadenaSQL")));
 
             // Servicios Singleton
@@ -45,23 +57,14 @@ namespace ExamenCGastos
                             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:key"]))
                         };
                     });
-
-            services.AddCors(options =>
-            {
-                options.AddPolicy("NewPolicy", builder =>
+                // Configura la generación de la documentación Swagger
+                services.AddSwaggerGen(c =>
                 {
-                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-                });
-            });
+                    // Agrega la información básica del API
+                    c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPI", Version = "1.0.0.4" });
 
-
-            services.AddSwaggerGen(c =>
-            {
-                // Agrega la información básica del API
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPI", Version = "1.0.0.4" });
-
-                // Configura el esquema de seguridad Bearer
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                    // Configura el esquema de seguridad Bearer
+                    c.AddSecurityRequirement(new OpenApiSecurityRequirement
         {
             {
                 new OpenApiSecurityScheme
@@ -75,32 +78,40 @@ namespace ExamenCGastos
                 Array.Empty<string>()
             }
         });
-            });
+                });
 
-            // Configura AutoMapper
-            services.AddAutoMapper(typeof(Startup));
-        }
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                // Configura AutoMapper
+                services.AddAutoMapper(typeof(Startup));
             }
 
-            app.UseMiddleware<Middleware.ExceptionMiddleware>();
-            app.UseRouting();
-
-            app.UseCors("NewPolicy");
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-
-            app.UseEndpoints(endpoints =>
+            // Método para configurar la aplicación y el entorno de ejecución
+            public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
             {
-                endpoints.MapControllers();
-            });
+                //acá se agrega la "dirección" al middleware
+                app.UseMiddleware<ExceptionMiddleware>();
+                // Habilita el uso de Swagger
+                app.UseSwagger();
+                app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPI"); });
+
+                // Redirecciona las solicitudes HTTP a HTTPS
+                app.UseHttpsRedirection();
+                app.UseRouting();
+
+                // Habilita la política CORS configurada anteriormente
+                app.UseCors(x => x.AllowAnyMethod().AllowAnyHeader().SetIsOriginAllowed(origin => true).AllowCredentials());
+
+                // Habilita la redirección HTTPS
+                app.UseHttpsRedirection();
+
+                // Habilita la autenticación y autorización
+                app.UseAuthentication();
+                app.UseAuthorization();
+
+                // Configura los endpoints de la aplicación
+                app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                });
+            }
         }
     }
-}

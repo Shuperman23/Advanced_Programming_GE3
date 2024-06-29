@@ -1,74 +1,27 @@
-using ControlGastosG3;
 using ExamenCGastos;
-using ExamenCGastos.Data;
 using ExamenCGastos.Interfaces;
-using ExamenCGastos.Middleware;
 using ExamenCGastos.Repositories;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
+// Creaci�n de un nuevo constructor para la aplicaci�n web utilizando la clase WebApplication
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 // Agregar servicio del contenedor UnitOfWork
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+builder.Services.AddScoped<ApiKeyAttribute>();
 
-builder.Services.AddDbContext<CGASTOSContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("CadenaSQL"));
-});
+// Creaci�n de una nueva instancia de la clase Startup, que se encarga de configurar la aplicaci�n
+var startup = new Startup(builder.Configuration);
 
-builder.Services.AddSingleton<Utilities>();
-builder.Services.AddTransient<ConfiguracionEmail>();
+// Llamada al m�todo ConfigureServices de la clase Startup para configurar los servicios de la aplicaci�n
+startup.ConfigureServices(builder.Services);
 
-builder.Services.AddAuthentication(config => {
-    config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(config =>
-{
-    config.RequireHttpsMetadata = false;
-    config.SaveToken = true;
-    config.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero,
-        IssuerSigningKey = new SymmetricSecurityKey
-        (Encoding.UTF8.GetBytes(builder.Configuration["Jwt:key"]!))
-    };
-});
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("NewPolicy", app =>
-    {
-        app.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-    });
-});
-
+// Construcci�n de la aplicaci�n
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-app.UseCors("NewPolicy");
-app.UseAuthentication();
-app.UseAuthorization();
+// Llamada al m�todo Configure de la clase Startup para configurar la aplicaci�n y el entorno de ejecuci�n
+startup.Configure(app, app.Environment);
 
-app.MapControllers();
-
+// Ejecuci�n de la aplicaci�n
 app.Run();

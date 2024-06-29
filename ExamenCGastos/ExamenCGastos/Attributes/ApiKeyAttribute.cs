@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ExamenCGastos.Interfaces;
 
-namespace ControlGastosG3
+namespace ExamenCGastos
 {
     // Esta clase define un atributo personalizado para la validación de una Api Key.
     // Puede aplicarse a clases y métodos, y actúa como un filtro de acción asincrónico.
