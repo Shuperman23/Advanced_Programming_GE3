@@ -8,8 +8,10 @@ namespace ExamenCGastos.Repositories
         private readonly CGASTOSContext _context;
 
         private IParametroRepository _parametro = default!;
+        private IUsuarioRepository _usuario = default!;
 
         public IParametroRepository Parametro => _parametro ?? new ParametroRepository(_context);
+        public IUsuarioRepository Usuario => _usuario ?? new UsuarioRepository(_context);
 
         public UnitOfWork(CGASTOSContext context)
         {

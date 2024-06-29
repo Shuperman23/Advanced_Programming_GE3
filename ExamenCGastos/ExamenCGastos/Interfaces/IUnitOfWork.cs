@@ -2,6 +2,9 @@
 {
     public interface IUnitOfWork
     {
+
+        IUsuarioRepository Usuario { get; }
+
         /// <summary>
         /// Referencia a la interfaca de Parametro
         /// </summary>

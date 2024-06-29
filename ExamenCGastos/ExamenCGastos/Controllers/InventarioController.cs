@@ -1,4 +1,5 @@
-﻿using ExamenCGastos.Data;
+﻿using ControlGastosG3;
+using ExamenCGastos.Data;
 using ExamenCGastos.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ExamenCGastos.Controllers
 {
+    [TypeFilter(typeof(ApiKeyAttribute))]
     [Route("api/[controller]")]
     [Authorize]
     [ApiController]
