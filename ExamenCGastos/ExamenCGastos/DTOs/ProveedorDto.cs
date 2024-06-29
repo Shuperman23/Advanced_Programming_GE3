@@ -2,7 +2,7 @@
 {
     public class ProveedorDto
     {
-        public int IdProveedor { get; set; }
+        public int Id { get; set; }
         public string Nombre { get; set; } = null!;
         public string Direccion { get; set; } = null!;
         public string TelefonoContacto { get; set; } = null!;
