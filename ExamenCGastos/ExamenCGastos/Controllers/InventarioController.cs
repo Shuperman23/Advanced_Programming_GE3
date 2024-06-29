@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Azure;
-using ControlGastosG3;
 using ExamenCGastos.Data;
 using ExamenCGastos.DTOs;
 using ExamenCGastos.Interfaces;
