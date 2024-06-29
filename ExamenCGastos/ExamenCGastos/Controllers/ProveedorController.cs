@@ -28,7 +28,7 @@ namespace ExamenCGastos.Controllers
 
         // GET: api/Proveedores/ListaProveedores
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProveedorDto>>> GetLibros()
+        public async Task<ActionResult<IEnumerable<ProveedorDto>>> GetProveedor()
         {
             var libros = await _unitOfWork.Proveedor.GetProveedoresAsync();
 

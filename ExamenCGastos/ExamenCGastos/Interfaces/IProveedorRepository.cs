@@ -8,7 +8,7 @@ namespace ExamenCGastos.Interfaces
     public interface IProveedorRepository : IBaseRepository<Proveedor>
     {
         Task<List<Proveedor>> GetProveedoresAsync();
-        Task<Proveedor?> GetProveedorById(int idProveedor);
+        Task<Proveedor?> GetProveedorById(int Id);
         Task<StoredProcedureDto?> CreateNewProveedorAsync(ProveedorDto resource);
         Task<StoredProcedureDto?> UpdateProveedorAsync(ProveedorDto resource);
     }
