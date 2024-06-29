@@ -30,10 +30,10 @@ namespace ExamenCGastos.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProveedorDto>>> GetProveedor()
         {
-            var libros = await _unitOfWork.Proveedor.GetProveedoresAsync();
+            var proveedores = await _unitOfWork.Proveedor.GetProveedoresAsync();
 
-            var libroDtos = _mapper.Map<List<ProveedorDto>>(libros);
-            return libroDtos;
+            var proveedoresMap = _mapper.Map<List<ProveedorDto>>(proveedores);
+            return proveedoresMap;
         }
 
         // GET: api/Proveedores/5
