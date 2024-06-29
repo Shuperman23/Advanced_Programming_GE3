@@ -1,5 +1,8 @@
-﻿using ControlGastosG3;
+﻿using AutoMapper;
+using ControlGastosG3;
 using ExamenCGastos.Data;
+using ExamenCGastos.DTOs;
+using ExamenCGastos.Interfaces;
 using ExamenCGastos.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,22 +16,31 @@ namespace ExamenCGastos.Controllers
     [ApiController]
     public class ProductoController : ControllerBase
     {
-        private readonly CGASTOSContext _controlGastosContext;
+        //private readonly CGASTOSContext _controlGastosContext;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public ProductoController(CGASTOSContext controlGastosContext)
+        public ProductoController(/*CGASTOSContext controlGastosContext*/IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _controlGastosContext = controlGastosContext;
+            //_controlGastosContext = controlGastosContext;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+
         }
 
         // GET: api/Producto/Lista
         [HttpGet]
         [Route("Lista")]
-        public async Task<IActionResult> Lista()
+        public async Task<ActionResult<IEnumerable<ProductoDto>>> Lista()
         {
             try
             {
-                var lista = await _controlGastosContext.Productos.ToListAsync();
-                return StatusCode(StatusCodes.Status200OK, new { value = lista });
+                var lista = await _unitOfWork.Producto.GetProductosAsync();
+                var listmap = _mapper.Map<List<ProductoDto>>(lista);
+
+                return listmap;
+                
+                //return StatusCode(StatusCodes.Status200OK, new { value = lista });
             }
             catch (Exception ex)
             {
@@ -39,19 +51,19 @@ namespace ExamenCGastos.Controllers
 
         // GET: api/Producto/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> ObtenerPorId(int id)
+        public async Task<ActionResult<ProductoDto>> ObtenerPorId(int id)
         {
             try
             {
-                var producto = await _controlGastosContext.Productos
-                    .FirstOrDefaultAsync(p => p.Id == id);
+                var producto = await _unitOfWork.Producto.GetProductoById/*(p => p.Id == id)*/(id);
 
                 if (producto == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(producto);
+                var productoById = _mapper.Map<ProductoDto>(producto);
+                return productoById;
             }
             catch (Exception ex)
             {
@@ -62,7 +74,7 @@ namespace ExamenCGastos.Controllers
 
         // POST: api/Producto
         [HttpPost]
-        public async Task<IActionResult> Crear([FromBody] Producto producto)
+        public async Task<ActionResult<ProductoDto>> Crear(ProductoDto productoDto)
         {
             try
             {
@@ -71,10 +83,15 @@ namespace ExamenCGastos.Controllers
                     return BadRequest(ModelState);
                 }
 
-                _controlGastosContext.Productos.Add(producto);
-                await _controlGastosContext.SaveChangesAsync();
+                var response = await _unitOfWork.Producto.CreateNewProductoAsync (productoDto);
 
-                return CreatedAtAction("ObtenerPorId", new { id = producto.Id }, producto);
+                if (response != null && response.SpResponse == 1)
+                {
+                    return Ok();
+                }
+                else
+                    return NotFound();
+
             }
             catch (Exception ex)
             {
@@ -85,24 +102,41 @@ namespace ExamenCGastos.Controllers
 
         // PUT: api/Producto/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Actualizar(int id, [FromBody] Producto producto)
+        public async Task<ActionResult<ProductoDto>> Actualizar(/*int id, [FromBody] Producto producto*/ProductoDto productoDto, int id)
         {
             try
             {
-                if (id != producto.Id)
+                var response = await _unitOfWork.Producto.UpdateProductoAsync(productoDto);
+
+                if (response != null && response.SpResponse == 1)
+                {
+                    return Ok();
+                }
+                else
+                    return NotFound();
+
+                /*
+                if (id != productoDto.Id)
                 {
                     return BadRequest();
-                }
-
-                _controlGastosContext.Entry(producto).State = EntityState.Modified;
+                } 
+                 _controlGastosContext.Entry(producto).State = EntityState.Modified;
+                _unitOfWork.Producto.UpdateProductoAsync(productoDto).State = EntityState.Modified;
 
                 try
                 {
-                    await _controlGastosContext.SaveChangesAsync();
+                    var response = await _unitOfWork.Producto.UpdateProductoAsync (productoDto);
+
+                    if (response != null && response.SpResponse == 1)
+                    {
+                        return Ok();
+                    }
+                    else
+                        return NotFound();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductoExists(id))
+                    if (!productoDto(id))
                     {
                         return NotFound();
                     }
@@ -112,7 +146,7 @@ namespace ExamenCGastos.Controllers
                     }
                 }
 
-                return NoContent();
+                return NoContent();*/
             }
             catch (Exception ex)
             {
@@ -123,20 +157,21 @@ namespace ExamenCGastos.Controllers
 
         // DELETE: api/Producto/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Eliminar(int id)
+        public async Task<ActionResult<ProductoDto>> Eliminar(int id)
         {
             try
             {
-                var producto = await _controlGastosContext.Productos.FindAsync(id);
+                var producto = await _unitOfWork.Producto.FindByIdAsync(id);
                 if (producto == null)
                 {
-                    return NotFound();
+                    return NotFound("No hay datos con el ID indicado");
                 }
 
-                _controlGastosContext.Productos.Remove(producto);
-                await _controlGastosContext.SaveChangesAsync();
+                _unitOfWork.Producto.Delete(producto);
+                await _unitOfWork.SaveChangesAsync();
 
-                return NoContent();
+                return Ok("Registro Eliminado.");
+        
             }
             catch (Exception ex)
             {
@@ -145,9 +180,9 @@ namespace ExamenCGastos.Controllers
             }
         }
 
-        private bool ProductoExists(int id)
+        /*private bool ProductoExists(int id)
         {
             return _controlGastosContext.Productos.Any(p => p.Id == id);
-        }
+        }*/
     }
 }

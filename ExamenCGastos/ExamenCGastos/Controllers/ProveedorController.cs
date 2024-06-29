@@ -1,5 +1,8 @@
-﻿using ControlGastosG3;
+﻿using AutoMapper;
+using ControlGastosG3;
 using ExamenCGastos.Data;
+using ExamenCGastos.DTOs;
+using ExamenCGastos.Interfaces;
 using ExamenCGastos.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,22 +16,29 @@ namespace ExamenCGastos.Controllers
     [ApiController]
     public class ProveedoresController : ControllerBase
     {
-        private readonly CGASTOSContext _controlGastosContext;
+        //private readonly CGASTOSContext _controlGastosContext;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public ProveedoresController(CGASTOSContext controlGastosContext)
+        public ProveedoresController(/*CGASTOSContext controlGastosContext*/IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _controlGastosContext = controlGastosContext;
+            //_controlGastosContext = controlGastosContext;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         // GET: api/Proveedores/ListaProveedores
         [HttpGet]
         [Route("ListaProveedores")]
-        public async Task<IActionResult> ListaProveedores()
+        public async Task<ActionResult<IEnumerable<ProveedorDto>>> ListaProveedores()
         {
             try
             {
-                var proveedores = await _controlGastosContext.Proveedores.ToListAsync();
-                return StatusCode(StatusCodes.Status200OK, new { value = proveedores });
+                var proveedores = await _unitOfWork.Proveedor.GetProveedoresAsync();
+                var proveedoresMap = _mapper.Map<List<ProveedorDto>>(proveedores);
+                return proveedoresMap;
+                /*var proveedores = await _controlGastosContext.Proveedores.ToListAsync();
+                return StatusCode(StatusCodes.Status200OK, new { value = proveedores });*/
             }
             catch (Exception ex)
             {
@@ -39,18 +49,29 @@ namespace ExamenCGastos.Controllers
 
         // GET: api/Proveedores/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> ObtenerPorId(int id)
+        public async Task<ActionResult<ProveedorDto>> ObtenerPorId(int id)
         {
             try
             {
-                var proveedor = await _controlGastosContext.Proveedores.FindAsync(id);
+                var proveedores = await _unitOfWork.Proveedor.GetProveedorById(id);
+                if (proveedores == null)
+                {
+                    return NotFound();
+                }
+
+                var proveedoresById = _mapper.Map<ProveedorDto>(proveedores);
+                return proveedoresById;
+                
+                
+                
+                /*var proveedor = await _controlGastosContext.Proveedores.FindAsync(id);
 
                 if (proveedor == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(proveedor);
+                return Ok(proveedor);*/
             }
             catch (Exception ex)
             {
@@ -61,11 +82,20 @@ namespace ExamenCGastos.Controllers
 
         // POST: api/Proveedores
         [HttpPost]
-        public async Task<IActionResult> Crear([FromBody] Proveedor proveedor)
+        public async Task<ActionResult<ProveedorDto>> Crear(ProveedorDto proveedorDto)
         {
             try
             {
-                if (!ModelState.IsValid)
+                var response = await _unitOfWork.Proveedor.CreateNewProveedorAsync(proveedorDto);
+                if (response != null && response.SpResponse == 1)
+                {
+                    return Ok();
+                }
+                else
+                    return NotFound();
+
+
+                /*if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
                 }
@@ -73,7 +103,7 @@ namespace ExamenCGastos.Controllers
                 _controlGastosContext.Proveedores.Add(proveedor);
                 await _controlGastosContext.SaveChangesAsync();
 
-                return CreatedAtAction("ObtenerPorId", new { id = proveedor.Id }, proveedor);
+                return CreatedAtAction("ObtenerPorId", new { id = proveedor.Id }, proveedor);*/
             }
             catch (Exception ex)
             {
@@ -84,11 +114,21 @@ namespace ExamenCGastos.Controllers
 
         // PUT: api/Proveedores/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Actualizar(int id, [FromBody] Proveedor proveedor)
+        public async Task<ActionResult<ProveedorDto>> Actualizar(ProveedorDto proveedorDto)
         {
             try
             {
-                if (id != proveedor.Id)
+                var response = await _unitOfWork.Proveedor.UpdateProveedorAsync(proveedorDto);
+                if (response != null && response.SpResponse == 1)
+                {
+                    return Ok();
+                }
+                else
+                    return NotFound();
+
+
+
+                /*if (id != proveedor.Id)
                 {
                     return BadRequest();
                 }
@@ -111,7 +151,7 @@ namespace ExamenCGastos.Controllers
                     }
                 }
 
-                return NoContent();
+                return NoContent();*/
             }
             catch (Exception ex)
             {
@@ -122,11 +162,22 @@ namespace ExamenCGastos.Controllers
 
         // DELETE: api/Proveedores/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Eliminar(int id)
+        public async Task<ActionResult<ProveedorDto>> Eliminar(int id)
         {
             try
             {
-                var proveedor = await _controlGastosContext.Proveedores.FindAsync(id);
+                var proveedores = await _unitOfWork.Proveedor.FindByIdAsync(id);
+                if (proveedores == null)
+                {
+                    return NotFound("No hay datos con el ID indicado");
+                }
+
+                _unitOfWork.Proveedor.Delete(proveedores);
+                await _unitOfWork.SaveChangesAsync();
+
+                return Ok("Registro Eliminado.");
+                
+                /*var proveedor = await _controlGastosContext.Proveedores.FindAsync(id);
                 if (proveedor == null)
                 {
                     return NotFound();
@@ -135,7 +186,7 @@ namespace ExamenCGastos.Controllers
                 _controlGastosContext.Proveedores.Remove(proveedor);
                 await _controlGastosContext.SaveChangesAsync();
 
-                return NoContent();
+                return NoContent();*/
             }
             catch (Exception ex)
             {
@@ -144,9 +195,9 @@ namespace ExamenCGastos.Controllers
             }
         }
 
-        private bool ProveedorExists(int id)
+        /*private bool ProveedorExists(int id)
         {
             return _controlGastosContext.Proveedores.Any(e => e.Id == id);
-        }
+        }*/
     }
 }
