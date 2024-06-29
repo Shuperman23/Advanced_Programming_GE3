@@ -49,7 +49,7 @@ namespace ExamenCGastos.Repositories
             var paramFechaMovimiento = new SqlParameter("@FechaMovimiento", resource.FechaMovimiento);
             var paramFechaCaducidad = new SqlParameter("@FechaCaducidad", (object)resource.FechaCaducidad ?? DBNull.Value);
 
-            var responseSp = await Context.Set<StoredProcedureDto>().FromSql($"EXECUTE [dbo].[spNewInventario] {paramInventarioId},{paramIdProducto},{paramTipoMovimiento}, {paramCantidad}, {paramPrecio}, {paramFechaMovimiento}, {paramFechaCaducidad}").ToListAsync();
+            var responseSp = await Context.Set<StoredProcedureDto>().FromSql($"EXECUTE [dbo].[spUpdateInventario] {paramInventarioId},{paramIdProducto},{paramTipoMovimiento}, {paramCantidad}, {paramPrecio}, {paramFechaMovimiento}, {paramFechaCaducidad}").ToListAsync();
 
             return responseSp.FirstOrDefault();
         }

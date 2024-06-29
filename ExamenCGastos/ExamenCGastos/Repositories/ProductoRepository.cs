@@ -39,7 +39,7 @@ namespace ExamenCGastos.Repositories
             var paramNombre = new SqlParameter("@Nombre", resource.Nombre);
             var paramProveedor = new SqlParameter("@Proveedor", resource.ProveedorId);
 
-            var responseSp = await Context.Set<StoredProcedureDto>().FromSql($"EXECUTE [dbo].[spNewProducto] {paramIdProducto}, {paramNombre}, {paramProveedor}").ToListAsync();
+            var responseSp = await Context.Set<StoredProcedureDto>().FromSql($"EXECUTE [dbo].[spUpdateProducto] {paramIdProducto}, {paramNombre}, {paramProveedor}").ToListAsync();
 
             return responseSp.FirstOrDefault();
 
