@@ -18,13 +18,11 @@ namespace ExamenCGastos.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        //private readonly CGASTOSContext _controlGastosContext;
 
-        public InventarioController(/*CGASTOSContext controlGastosContext*/ IUnitOfWork unitOfWork, IMapper mapper)
+        public InventarioController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            //_controlGastosContext = controlGastosContext;
         }
 
         // GET: api/Inventario/Lista
@@ -38,12 +36,6 @@ namespace ExamenCGastos.Controllers
                 var inventarioMap = _mapper.Map<List<InventarioDto>>(inventario);
 
                 return inventarioMap;
-
-                /*var inventario = await _controlGastosContext.Inventarios
-                    .Include(i => i.Producto) // Incluir la relación con Producto si es necesaria
-                    .ToListAsync();
-
-                return Ok(new { value = inventario });*/
             }
             catch (Exception ex)
             {
@@ -66,17 +58,6 @@ namespace ExamenCGastos.Controllers
 
                 var inventarioMap = _mapper.Map<InventarioDto>(inventario);
                 return inventarioMap;
-                
-                /*var inventario = await _controlGastosContext.Inventarios
-                    .Include(i => i.Producto) // Incluir la relación con Producto si es necesaria
-                    .FirstOrDefaultAsync(i => i.Id == id);
-
-                if (inventario == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(inventario);*/
             }
             catch (Exception ex)
             {
@@ -87,7 +68,7 @@ namespace ExamenCGastos.Controllers
 
         // POST: api/Inventario
         [HttpPost]
-        public async Task<ActionResult<InventarioDto>> Crear(/*[FromBody] Inventario inventario*/InventarioDto inventarioDto)
+        public async Task<ActionResult<InventarioDto>> Crear(InventarioDto inventarioDto)
         {
             try
             {
@@ -99,16 +80,6 @@ namespace ExamenCGastos.Controllers
                 }
                 else
                     return NotFound();
-
-                /*if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                _controlGastosContext.Inventarios.Add(inventario);
-                await _controlGastosContext.SaveChangesAsync();
-
-                return CreatedAtAction("ObtenerPorId", new { id = inventario.Id }, inventario);*/
             }
             catch (Exception ex)
             {
@@ -119,7 +90,7 @@ namespace ExamenCGastos.Controllers
 
         // PUT: api/Inventario/5
         [HttpPut]
-        public async Task<ActionResult<InventarioDto>> Actualizar(InventarioDto inventarioDto/*int id, [FromBody] Inventario inventario*/)
+        public async Task<ActionResult<InventarioDto>> Actualizar(InventarioDto inventarioDto)
         {
             try
             {
@@ -131,31 +102,6 @@ namespace ExamenCGastos.Controllers
                 }
                 else
                     return NotFound();
-
-                /*if (id != inventario.Id)
-                {
-                    return BadRequest();
-                }
-
-                _controlGastosContext.Entry(inventario).State = EntityState.Modified;
-
-                try
-                {
-                    await _controlGastosContext.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!InventarioExists(id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-
-                return NoContent();*/
             }
             catch (Exception ex)
             {
@@ -181,17 +127,6 @@ namespace ExamenCGastos.Controllers
                 await _unitOfWork.SaveChangesAsync();
 
                 return Ok("Registro Eliminado.");
-
-                /*var inventario = await _controlGastosContext.Inventarios.FindAsync(id);
-                if (inventario == null)
-                {
-                    return NotFound();
-                }
-
-                _controlGastosContext.Inventarios.Remove(inventario);
-                await _controlGastosContext.SaveChangesAsync();
-
-                return NoContent();*/
             }
             catch (Exception ex)
             {
@@ -199,11 +134,5 @@ namespace ExamenCGastos.Controllers
                 throw;
             }
         }
-
-        /*private bool InventarioExists(int id)
-        {
-            return _controlGastosContext.Inventarios.Any(i => i.Id == id);
-        }*/
     }
 }
-//

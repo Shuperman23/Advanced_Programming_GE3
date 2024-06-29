@@ -15,13 +15,13 @@ namespace ExamenCGastos.Controllers
     [ApiController]
     public class ProveedoresController : ControllerBase
     {
-        //private readonly CGASTOSContext _controlGastosContext;
+        
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public ProveedoresController(/*CGASTOSContext controlGastosContext*/IMapper mapper, IUnitOfWork unitOfWork)
+        public ProveedoresController(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            //_controlGastosContext = controlGastosContext;
+            
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
@@ -51,16 +51,6 @@ namespace ExamenCGastos.Controllers
                 var proveedoresById = _mapper.Map<ProveedorDto>(proveedores);
                 return proveedoresById;
                 
-                
-                
-                /*var proveedor = await _controlGastosContext.Proveedores.FindAsync(id);
-
-                if (proveedor == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(proveedor);*/
             }
             catch (Exception ex)
             {
@@ -83,16 +73,6 @@ namespace ExamenCGastos.Controllers
                 else
                     return NotFound();
 
-
-                /*if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                _controlGastosContext.Proveedores.Add(proveedor);
-                await _controlGastosContext.SaveChangesAsync();
-
-                return CreatedAtAction("ObtenerPorId", new { id = proveedor.Id }, proveedor);*/
             }
             catch (Exception ex)
             {
@@ -115,32 +95,6 @@ namespace ExamenCGastos.Controllers
                 else
                     return NotFound();
 
-
-
-                /*if (id != proveedor.Id)
-                {
-                    return BadRequest();
-                }
-
-                _controlGastosContext.Entry(proveedor).State = EntityState.Modified;
-
-                try
-                {
-                    await _controlGastosContext.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProveedorExists(id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-
-                return NoContent();*/
             }
             catch (Exception ex)
             {
@@ -166,16 +120,6 @@ namespace ExamenCGastos.Controllers
 
                 return Ok("Registro Eliminado.");
                 
-                /*var proveedor = await _controlGastosContext.Proveedores.FindAsync(id);
-                if (proveedor == null)
-                {
-                    return NotFound();
-                }
-
-                _controlGastosContext.Proveedores.Remove(proveedor);
-                await _controlGastosContext.SaveChangesAsync();
-
-                return NoContent();*/
             }
             catch (Exception ex)
             {
@@ -183,10 +127,5 @@ namespace ExamenCGastos.Controllers
                 throw;
             }
         }
-
-        /*private bool ProveedorExists(int id)
-        {
-            return _controlGastosContext.Proveedores.Any(e => e.Id == id);
-        }*/
     }
 }

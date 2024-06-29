@@ -15,13 +15,11 @@ namespace ExamenCGastos.Controllers
     [ApiController]
     public class ProductoController : ControllerBase
     {
-        //private readonly CGASTOSContext _controlGastosContext;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public ProductoController(/*CGASTOSContext controlGastosContext*/IUnitOfWork unitOfWork, IMapper mapper)
+        public ProductoController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            //_controlGastosContext = controlGastosContext;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
 
@@ -38,8 +36,7 @@ namespace ExamenCGastos.Controllers
                 var listmap = _mapper.Map<List<ProductoDto>>(lista);
 
                 return listmap;
-                
-                //return StatusCode(StatusCodes.Status200OK, new { value = lista });
+
             }
             catch (Exception ex)
             {
@@ -54,7 +51,7 @@ namespace ExamenCGastos.Controllers
         {
             try
             {
-                var producto = await _unitOfWork.Producto.GetProductoById/*(p => p.Id == id)*/(id);
+                var producto = await _unitOfWork.Producto.GetProductoById(id);
 
                 if (producto == null)
                 {
@@ -101,7 +98,7 @@ namespace ExamenCGastos.Controllers
 
         // PUT: api/Producto/5
         [HttpPut]
-        public async Task<ActionResult<ProductoDto>> Actualizar(/*int id, [FromBody] Producto producto*/ProductoDto productoDto, int id)
+        public async Task<ActionResult<ProductoDto>> Actualizar(ProductoDto productoDto, int id)
         {
             try
             {
@@ -113,39 +110,6 @@ namespace ExamenCGastos.Controllers
                 }
                 else
                     return NotFound();
-
-                /*
-                if (id != productoDto.Id)
-                {
-                    return BadRequest();
-                } 
-                 _controlGastosContext.Entry(producto).State = EntityState.Modified;
-                _unitOfWork.Producto.UpdateProductoAsync(productoDto).State = EntityState.Modified;
-
-                try
-                {
-                    var response = await _unitOfWork.Producto.UpdateProductoAsync (productoDto);
-
-                    if (response != null && response.SpResponse == 1)
-                    {
-                        return Ok();
-                    }
-                    else
-                        return NotFound();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!productoDto(id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-
-                return NoContent();*/
             }
             catch (Exception ex)
             {
@@ -178,10 +142,5 @@ namespace ExamenCGastos.Controllers
                 throw;
             }
         }
-
-        /*private bool ProductoExists(int id)
-        {
-            return _controlGastosContext.Productos.Any(p => p.Id == id);
-        }*/
     }
 }

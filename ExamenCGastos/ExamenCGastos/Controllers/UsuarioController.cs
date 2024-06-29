@@ -18,9 +18,8 @@ namespace ExamenCGastos.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public UsuarioController(/*CGASTOSContext controlGastosContext*/IUnitOfWork unitOfWork, IMapper mapper)
+        public UsuarioController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            //_controlGastosContext = controlGastosContext;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
 
