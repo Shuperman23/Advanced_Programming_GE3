@@ -1,19 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
-namespace ExamenCGastos.Models;
-
-public partial class ErrorLog
+namespace ExamenCGastos.Models
 {
-    public int Id { get; set; }
+    public class ErrorLog
+    {
+        public ErrorLog(int Id, string Controller = null, string Endpoint = null, string ErrorMessage = null, string ErrorStackTrace = null)
+        {
+            this.Id = Id;
+            this.Controller = Controller;
+            this.Endpoint = Endpoint;
+            this.ErrorMessage = ErrorMessage;
+            this.ErrorStackTrace = ErrorStackTrace;
+            this.ErrorTimestamp = DateTime.Now;
+        }
 
-    public string Controller { get; set; } = null!;
+        public int Id { get; set; }
 
-    public string Endpoint { get; set; } = null!;
+        public string Controller { get; set; }
 
-    public string ErrorMessage { get; set; } = null!;
+        public string Endpoint { get; set; }
 
-    public string ErrorStackTrace { get; set; } = null!;
+        public string ErrorMessage { get; set; }
 
-    public DateTime ErrorTimestamp { get; set; }
+        public string ErrorStackTrace { get; set; }
+
+        public DateTime ErrorTimestamp { get; set; }
+    }
 }

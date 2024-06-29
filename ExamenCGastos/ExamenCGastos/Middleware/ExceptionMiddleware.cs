@@ -1,73 +1,72 @@
-﻿using ExamenCGastos.Models;
-using System.Net;
-using System.Text.Json;
-using ExamenCGastos.DTOs;
-using ExamenCGastos.Interfaces;
-
-
-namespace ExamenCGastos.Middleware
+﻿namespace ExamenCGastos.Middleware
+{
+    using System;
+    using System.Net;
+    using System.Text.Json;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Logging;
+    using ExamenCGastos.Models;
+    using System.Security.Policy;
+    using ExamenCGastos.Data;
+    using Microsoft.EntityFrameworkCore;
+    namespace Middleware
 {
     public class ExceptionMiddleware
     {
-        private readonly RequestDelegate _next;
-        private readonly ILogger<ExceptionMiddleware> _logger;
-        private readonly IHostEnvironment _env;
+        private readonly RequestDelegate next;
+        private readonly ILogger<ExceptionMiddleware> logger;
+        private readonly IHostEnvironment env;
+        //el Service Provider con lo que investigué sirve para poder referenciar el DBcontext al Middleware
+        private readonly IServiceProvider serviceProvider;
 
-        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger, IHostEnvironment env)
+        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger, IHostEnvironment env, IServiceProvider serviceProvider)
         {
-            _env = env;
-            _logger = logger;
-            _next = next;
+            this.next = next;
+            this.logger = logger;
+            this.env = env;
+            this.serviceProvider = serviceProvider;
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
             try
             {
-                await _next(context); // Invoca el siguiente middleware en la cadena
+                await next(context);
             }
             catch (Exception ex)
             {
-                // Registra el error en los logs
-                _logger.LogError(ex, message: "An exception has occurred: {ExceptionMessage}", ex.Message);
-
-                // Guarda el error en la base de datos a través del unitOfWork
-                await Utilities.CreateNewErrorAsync(new ErrorLogDto
+                using (var scope = serviceProvider.CreateScope())
                 {
-                    Controller = context.Request.Path,
-                    Endpoint = context.Request.Method,
-                    ErrorMessage = ex.Message,
-                    ErrorStackTrace = ex.StackTrace
-                });
+                    //Vean maes con este ServiceProvider el puede instanciar la db al middle sin que se caiga el programa
+                    var dbContext = scope.ServiceProvider.GetRequiredService<CGASTOSContext>();
 
-                // Configura la respuesta de error para el cliente
-                context.Response.ContentType = "application/json";
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    //el logger es un bloq de notas 
+                    logger.LogError(ex, ex.Message);
+                    context.Response.ContentType = "application/json";
 
-                var response = new ApiRequestResultDto<string>
-                {
-                    Success = false,
-                    Message = "Error while processing operation"
-                };
+                    //quise manejar el codigo del error pero no se pedía en la investigación
+                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    var EndPoints = $"{context.Request.Path}{context.Request.QueryString}";
 
-                // Agrega detalles adicionales al mensaje de error si estamos en entorno de desarrollo
-                if (_env.IsDevelopment())
-                {
-                    response.Message += $": {ex.Message}";
-                    response.Result = $"Error: {ex.StackTrace?.ToString()}";
+                    // Crear una instancia de ErrorLog con los detalles del error
+                    var response = env.IsDevelopment() ? new ErrorLog(0, context.Request.RouteValues["controller"]?.ToString(), EndPoints, ex.Message, ex.StackTrace?.ToString()) :
+                    new ErrorLog(context.Response.StatusCode, "Internal Server Error");
+
+                    //se guarda la info en la db
+                    dbContext.ErrorLogs.Add(response);
+                    await dbContext.SaveChangesAsync();
+
+                    // Serializar la instancia de ErrorLog a JSON
+                    var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+                    var json = JsonSerializer.Serialize(response, options);
+
+                    await context.Response.WriteAsync(json);
                 }
-                else
-                {
-                    response.Message += $" Internal Server Error.";
-                }
-
-                // Serializa la respuesta en formato JSON
-                var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-                var json = JsonSerializer.Serialize(response, options);
-
-                // Envía la respuesta JSON al cliente
-                await context.Response.WriteAsync(json);
             }
         }
     }
+}
 }

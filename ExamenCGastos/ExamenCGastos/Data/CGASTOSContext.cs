@@ -107,7 +107,10 @@ public partial class CGASTOSContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
         });
-
+        modelBuilder.Entity<StoredProcedureDto>(entity =>
+        {
+            entity.HasNoKey();
+        });
         OnModelCreatingPartial(modelBuilder);
 
         modelBuilder.Entity<StoredProcedureDto>(entity =>

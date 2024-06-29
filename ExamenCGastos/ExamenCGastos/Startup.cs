@@ -1,5 +1,6 @@
 ﻿using ExamenCGastos.Data;
 using ExamenCGastos.Middleware;
+using ExamenCGastos.Middleware.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -87,9 +88,9 @@ namespace ExamenCGastos
             // Método para configurar la aplicación y el entorno de ejecución
             public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
             {
-                //acá se agrega la "dirección" al middleware
+                 //acá se agrega la "dirección" al middleware
                 app.UseMiddleware<ExceptionMiddleware>();
-                // Habilita el uso de Swagger
+                 // Habilita el uso de Swagger
                 app.UseSwagger();
                 app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPI"); });
 
