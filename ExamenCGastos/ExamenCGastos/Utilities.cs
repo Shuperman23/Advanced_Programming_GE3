@@ -52,32 +52,5 @@ namespace ExamenCGastos
 
             return new JwtSecurityTokenHandler().WriteToken(jwtConfig);
         }
-
-        public static async Task<bool> CreateNewErrorAsync(ErrorLogDto resource)
-        {
-            try
-            {
-                using (CGASTOSContext _context = new())
-                {
-                    var errorLog = new ErrorLog
-                    {
-                        Controller = resource.Controller,
-                        Endpoint = resource.Endpoint,
-                        ErrorMessage = resource.ErrorMessage,
-                        ErrorStackTrace = resource.ErrorStackTrace,
-                        ErrorTimestamp = DateTime.Now
-                    };
-
-                    _context.ErrorLogs.Add(errorLog);
-                    await _context.SaveChangesAsync();
-                }
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
     }
 }
