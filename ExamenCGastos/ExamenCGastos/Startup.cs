@@ -55,9 +55,31 @@ namespace ExamenCGastos
             });
 
 
-            services.AddSwaggerGen();
-        }
+            services.AddSwaggerGen(c =>
+            {
+                // Agrega la información básica del API
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPI", Version = "1.0.0.4" });
 
+                // Configura el esquema de seguridad Bearer
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                Array.Empty<string>()
+            }
+        });
+            });
+
+            // Configura AutoMapper
+            services.AddAutoMapper(typeof(Startup));
+        }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
