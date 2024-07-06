@@ -11,8 +11,7 @@ namespace ExamenCGastos.DTOs
         public int? ProductoId { get; set; }
 
         [Required(ErrorMessage = "El TipoMovimiento es requerido.")]
-        //no me acuerdo cual era el tipo entonces reutilizé la vara
-        [RegularExpression("^(AC|IN)$", ErrorMessage = "El TipoMovimiento solo permite los valores 'AC' o 'IN'.")]
+        [RegularExpression("^(Salida|Ingreso)$", ErrorMessage = "El TipoMovimiento solo permite los valores 'Salida' o 'Ingreso'.")]
         public string? TipoMovimiento { get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = "La Cantidad no puede ser un número negativo.")]
