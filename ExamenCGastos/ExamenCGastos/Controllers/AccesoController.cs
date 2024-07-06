@@ -30,6 +30,13 @@ namespace ExamenCGastos.Controllers
         {
             try
             {
+                var existingUser = await _controlGastosContext.Usuarios.FirstOrDefaultAsync(u => u.Correo == objeto.Correo);
+
+                if (existingUser != null)
+                {
+                    return BadRequest("El correo ya está en uso.");
+                }
+
                 var modeloUsuario = new Usuario
                 {
                     Nombre = objeto.Nombre,
@@ -43,12 +50,12 @@ namespace ExamenCGastos.Controllers
                 if (modeloUsuario.IdUsuario != 0)
                 {
                     string emailBody = $@"
-                     <html>
-                      <body>
-                       <h1> Bienvenido, {modeloUsuario.Nombre} </h1>
-                      <p> Tu contraseña es : <strong> {objeto.Clave} </strong></p>
-                    </body>
-                   </html>";
+             <html>
+              <body>
+               <h1> Bienvenido, {modeloUsuario.Nombre} </h1>
+              <p> Tu contraseña es : <strong> {objeto.Clave} </strong></p>
+            </body>
+           </html>";
 
                     await _configuracionesEmail.SendEmailAsync(modeloUsuario.Correo, "Registro Exitoso", emailBody);
 
@@ -61,10 +68,10 @@ namespace ExamenCGastos.Controllers
             }
             catch (Exception ex)
             {
-
                 throw;
             }
         }
+
 
         [HttpPost]
         [Route("Login")]
@@ -76,9 +83,13 @@ namespace ExamenCGastos.Controllers
                     .Where(u => u.Correo == objeto.Correo)
                     .FirstOrDefaultAsync();
 
-                if (usuarioEncontrado == null || usuarioEncontrado.Clave == null || !_utilidades.VerificarContrasena(objeto.Clave, usuarioEncontrado.Clave)) // Usar bcrypt para verificar la contraseña
+                if (usuarioEncontrado == null)
                 {
-                    return StatusCode(StatusCodes.Status200OK, new { isSuccess = false, token = "" });
+                    return StatusCode(StatusCodes.Status200OK, new { isSuccess = false, message = "No se encontró ese usuario." });
+                }
+                else if (usuarioEncontrado.Clave == null || !_utilidades.VerificarContrasena(objeto.Clave, usuarioEncontrado.Clave)) // Usar bcrypt para verificar la contraseña
+                {
+                    return StatusCode(StatusCodes.Status200OK, new { isSuccess = false, message = "La contraseña es incorrecta." });
                 }
                 else
                 {
@@ -87,10 +98,8 @@ namespace ExamenCGastos.Controllers
             }
             catch (Exception ex)
             {
-
                 throw;
             }
         }
     }
 }
-
