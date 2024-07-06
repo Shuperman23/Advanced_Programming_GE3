@@ -50,7 +50,7 @@ public partial class CGASTOSContext : DbContext
             entity.Property(e => e.FechaCaducidad).HasColumnType("datetime");
             entity.Property(e => e.FechaMovimiento).HasColumnType("datetime");
             entity.Property(e => e.Precio).HasColumnType("decimal(10, 2)");
-            entity.Property(e => e.TipoMovimiento).HasMaxLength(10);
+            entity.Property(e => e.TipoMovimiento).HasMaxLength(20);
 
             entity.HasOne(d => d.Producto).WithMany(p => p.Inventarios)
                 .HasForeignKey(d => d.ProductoId)
@@ -74,7 +74,7 @@ public partial class CGASTOSContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK__Producto__3214EC074F9B7CCE");
 
-            entity.Property(e => e.Nombre).HasMaxLength(100);
+            entity.Property(e => e.Nombre).HasMaxLength(200);
 
             entity.HasOne(d => d.Proveedor).WithMany(p => p.Productos)
                 .HasForeignKey(d => d.ProveedorId)
@@ -85,10 +85,10 @@ public partial class CGASTOSContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK__Proveedo__3214EC07BF9D9E5B");
 
-            entity.Property(e => e.Direccion).HasMaxLength(200);
-            entity.Property(e => e.EmailContacto).HasMaxLength(100);
-            entity.Property(e => e.Nombre).HasMaxLength(100);
-            entity.Property(e => e.TelefonoContacto).HasMaxLength(20);
+            entity.Property(e => e.Direccion).HasMaxLength(400);
+            entity.Property(e => e.EmailContacto).HasMaxLength(200);
+            entity.Property(e => e.Nombre).HasMaxLength(200);
+            entity.Property(e => e.TelefonoContacto).HasMaxLength(40);
         });
 
         modelBuilder.Entity<Usuario>(entity =>
@@ -101,7 +101,7 @@ public partial class CGASTOSContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.Correo)
-                .HasMaxLength(50)
+                .HasMaxLength(65)
                 .IsUnicode(false);
             entity.Property(e => e.Nombre)
                 .HasMaxLength(50)
