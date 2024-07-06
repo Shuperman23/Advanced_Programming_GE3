@@ -70,6 +70,11 @@ namespace ExamenCGastos.Controllers
         [HttpPost]
         public async Task<ActionResult<InventarioDto>> Crear(InventarioDto inventarioDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             try
             {
                 var response = await _unitOfWork.Inventario.CreateNewInventarioAsync(inventarioDto);
@@ -92,6 +97,11 @@ namespace ExamenCGastos.Controllers
         [HttpPut]
         public async Task<ActionResult<InventarioDto>> Actualizar(InventarioDto inventarioDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             try
             {
                 var response = await _unitOfWork.Inventario.UpdateInventarioAsync(inventarioDto);
