@@ -55,7 +55,7 @@ namespace ExamenCGastos.Controllers
 
                 if (producto == null)
                 {
-                    return NotFound();
+                    return NotFound("No hay datos con el ID indicado");
                 }
 
                 var productoById = _mapper.Map<ProductoDto>(producto);
@@ -86,7 +86,7 @@ namespace ExamenCGastos.Controllers
                     return Ok();
                 }
                 else
-                    return NotFound();
+                    return NotFound("No hay datos con el ID indicado");
 
             }
             catch (Exception ex)

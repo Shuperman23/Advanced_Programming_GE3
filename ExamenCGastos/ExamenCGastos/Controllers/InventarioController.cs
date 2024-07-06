@@ -53,7 +53,7 @@ namespace ExamenCGastos.Controllers
                 var inventario = await _unitOfWork.Inventario.GetInventarioById(id);
                 if(inventario == null)
                 {
-                    return NotFound();
+                    return NotFound("No hay datos con el ID indicado");
                 }
 
                 var inventarioMap = _mapper.Map<InventarioDto>(inventario);
@@ -84,7 +84,7 @@ namespace ExamenCGastos.Controllers
                     return Ok();
                 }
                 else
-                    return NotFound();
+                    return NotFound("No hay datos con el ID indicado");
             }
             catch (Exception ex)
             {
@@ -111,7 +111,7 @@ namespace ExamenCGastos.Controllers
                     return Ok();
                 }
                 else
-                    return NotFound();
+                    return NotFound("No hay datos con el ID indicado");
             }
             catch (Exception ex)
             {
