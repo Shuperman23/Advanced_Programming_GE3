@@ -82,7 +82,7 @@ namespace ExamenCGastos.Controllers
 
                 if (response != null && response.SpResponse == 1)
                 {
-                    return Ok();
+                    return Ok(Mensajes.C);
                 }
                 else
                     return NotFound(Mensajes.E);
