@@ -83,13 +83,9 @@ namespace ExamenCGastos.Controllers
                     .Where(u => u.Correo == objeto.Correo)
                     .FirstOrDefaultAsync();
 
-                if (usuarioEncontrado == null)
+                if (usuarioEncontrado == null || usuarioEncontrado.Clave == null || !_utilidades.VerificarContrasena(objeto.Clave, usuarioEncontrado.Clave)) // Usar bcrypt para verificar la contraseña
                 {
-                    return StatusCode(StatusCodes.Status200OK, new { isSuccess = false, message = "No se encontró ese usuario." });
-                }
-                else if (usuarioEncontrado.Clave == null || !_utilidades.VerificarContrasena(objeto.Clave, usuarioEncontrado.Clave)) // Usar bcrypt para verificar la contraseña
-                {
-                    return StatusCode(StatusCodes.Status200OK, new { isSuccess = false, message = "La contraseña es incorrecta." });
+                    return StatusCode(StatusCodes.Status200OK, new { isSuccess = false, token = "" });
                 }
                 else
                 {
@@ -98,6 +94,7 @@ namespace ExamenCGastos.Controllers
             }
             catch (Exception ex)
             {
+
                 throw;
             }
         }
