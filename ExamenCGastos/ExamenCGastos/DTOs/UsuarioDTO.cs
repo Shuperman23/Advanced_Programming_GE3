@@ -4,7 +4,7 @@ namespace ExamenCGastos.DTOs
 {
     public class UsuarioDTO
     {
-        [Range(0, int.MaxValue, ErrorMessage = "El IdUsuario no puede ser un número negativo.")]
+        [Range(1, int.MaxValue, ErrorMessage = "El IdUsuario no puede ser un número negativo.")]
         public int IdUsuario { get; set; }
 
         [Required(ErrorMessage = "El nombre es requerido.")]

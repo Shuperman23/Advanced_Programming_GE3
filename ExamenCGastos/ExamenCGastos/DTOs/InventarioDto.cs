@@ -4,10 +4,10 @@ namespace ExamenCGastos.DTOs
 {
     public class InventarioDto
     {
-        [Range(0, int.MaxValue, ErrorMessage = "El Id no puede ser un número negativo.")]
+        [Range(1, int.MaxValue, ErrorMessage = "El Id no puede ser un número negativo.")]
         public int Id { get; set; }
 
-        [Range(0, int.MaxValue, ErrorMessage = "El ProductoId no puede ser un número negativo.")]
+        [Range(1, int.MaxValue, ErrorMessage = "El ProductoId no puede ser un número negativo.")]
         public int? ProductoId { get; set; }
 
         [Required(ErrorMessage = "El TipoMovimiento es requerido.")]
