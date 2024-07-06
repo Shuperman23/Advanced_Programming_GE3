@@ -45,7 +45,7 @@ namespace ExamenCGastos.Controllers
                 var proveedores = await _unitOfWork.Proveedor.GetProveedorById(id);
                 if (proveedores == null)
                 {
-                    return NotFound();
+                    return NotFound(Mensajes.E);
                 }
 
                 var proveedoresById = _mapper.Map<ProveedorDto>(proveedores);
@@ -68,10 +68,10 @@ namespace ExamenCGastos.Controllers
                 var response = await _unitOfWork.Proveedor.CreateNewProveedorAsync(proveedorDto);
                 if (response != null && response.SpResponse == 1)
                 {
-                    return Ok();
+                    return Ok(Mensajes.C);
                 }
                 else
-                    return NotFound();
+                    return NotFound(Mensajes.E);
 
             }
             catch (Exception ex)
@@ -90,10 +90,10 @@ namespace ExamenCGastos.Controllers
                 var response = await _unitOfWork.Proveedor.UpdateProveedorAsync(proveedorDto);
                 if (response != null && response.SpResponse == 1)
                 {
-                    return Ok();
+                    return Ok(Mensajes.U);
                 }
                 else
-                    return NotFound();
+                    return NotFound(Mensajes.E);
 
             }
             catch (Exception ex)
@@ -112,13 +112,13 @@ namespace ExamenCGastos.Controllers
                 var proveedores = await _unitOfWork.Proveedor.FindByIdAsync(id);
                 if (proveedores == null)
                 {
-                    return NotFound("No hay datos con el ID indicado");
+                    return NotFound(Mensajes.E);
                 }
 
                 _unitOfWork.Proveedor.Delete(proveedores);
                 await _unitOfWork.SaveChangesAsync();
 
-                return Ok("Registro Eliminado.");
+                return Ok(Mensajes.D);
                 
             }
             catch (Exception ex)

@@ -40,7 +40,7 @@ namespace ExamenCGastos.Controllers
 
             if (usuario == null)
             {
-                return NotFound();
+                return NotFound(Mensajes.E);
             }
 
             var usuarioDto = _mapper.Map<UsuarioDTO>(usuario);
@@ -55,10 +55,10 @@ namespace ExamenCGastos.Controllers
 
             if (response != null && response.SpResponse == 1)
             {
-                return Ok();
+                return Ok(Mensajes.U);
             }
             else
-                return NotFound();
+                return NotFound(Mensajes.E);
         }
 
         // POST: api/Acceso
@@ -69,10 +69,10 @@ namespace ExamenCGastos.Controllers
 
             if (response != null && response.SpResponse == 1)
             {
-                return Ok();
+                return Ok(Mensajes.C);
             }
             else
-                return NotFound();
+                return NotFound(Mensajes.E);
         }
 
         // DELETE: api/Acceso/5
@@ -82,13 +82,13 @@ namespace ExamenCGastos.Controllers
             var usuario = await _unitOfWork.Usuario.FindByIdAsync(id);
             if (usuario == null)
             {
-                return NotFound();
+                return NotFound(Mensajes.E);
             }
 
             _unitOfWork.Usuario.Delete(usuario);
             await _unitOfWork.SaveChangesAsync();
 
-            return Ok();
+            return Ok(Mensajes.D);
         }
     }   
 }

@@ -7,6 +7,7 @@ using ExamenCGastos.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ExamenCGastos;
 
 namespace ExamenCGastos.Controllers
 {
@@ -53,7 +54,7 @@ namespace ExamenCGastos.Controllers
                 var inventario = await _unitOfWork.Inventario.GetInventarioById(id);
                 if(inventario == null)
                 {
-                    return NotFound("No hay datos con el ID indicado");
+                    return NotFound(Mensajes.E);
                 }
 
                 var inventarioMap = _mapper.Map<InventarioDto>(inventario);
@@ -84,7 +85,7 @@ namespace ExamenCGastos.Controllers
                     return Ok();
                 }
                 else
-                    return NotFound("No hay datos con el ID indicado");
+                    return NotFound(Mensajes.E);
             }
             catch (Exception ex)
             {
@@ -108,10 +109,10 @@ namespace ExamenCGastos.Controllers
 
                 if (response != null && response.SpResponse == 1)
                 {
-                    return Ok();
+                    return Ok(Mensajes.U);
                 }
                 else
-                    return NotFound("No hay datos con el ID indicado");
+                    return NotFound(Mensajes.E);
             }
             catch (Exception ex)
             {
@@ -130,13 +131,13 @@ namespace ExamenCGastos.Controllers
 
                 if (inventario == null)
                 {  
-                    return NotFound("No hay datos con el ID indicado"); 
+                    return NotFound(Mensajes.E); 
                 }
 
                 _unitOfWork.Inventario.Delete(inventario);
                 await _unitOfWork.SaveChangesAsync();
 
-                return Ok("Registro Eliminado.");
+                return Ok(Mensajes.D);
             }
             catch (Exception ex)
             {
