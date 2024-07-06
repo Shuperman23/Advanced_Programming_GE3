@@ -8,11 +8,11 @@ namespace ExamenCGastos.DTOs
         public int Id { get; set; }
 
         [Required(ErrorMessage = "El nombre es requerido.")]
-        [StringLength(100, MinimumLength = 2, ErrorMessage = "El nombre debe tener entre 2 y 100 caracteres.")]
+        [StringLength(200, MinimumLength = 2, ErrorMessage = "El nombre debe tener entre 2 y 200 caracteres.")]
         public string Nombre { get; set; } = null!;
 
         [Required(ErrorMessage = "La dirección es requerida.")]
-        [StringLength(250, MinimumLength = 10, ErrorMessage = "La dirección debe tener entre 10 y 250 caracteres.")]
+        [StringLength(400, MinimumLength = 10, ErrorMessage = "La dirección debe tener entre 10 y 400 caracteres.")]
         public string Direccion { get; set; } = null!;
 
         [Required(ErrorMessage = "El teléfono de contacto es requerido.")]

@@ -8,7 +8,7 @@ namespace ExamenCGastos.DTOs
         public int Id { get; set; }
 
         [Required(ErrorMessage = "El nombre es requerido.")]
-        [StringLength(100, MinimumLength = 2, ErrorMessage = "El nombre debe tener entre 2 y 100 caracteres.")]
+        [StringLength(200, MinimumLength = 2, ErrorMessage = "El nombre debe tener entre 2 y 200 caracteres.")]
         public string Nombre { get; set; } = null!;
 
         [Range(0, int.MaxValue, ErrorMessage = "El ProveedorId no puede ser un número negativo.")]
