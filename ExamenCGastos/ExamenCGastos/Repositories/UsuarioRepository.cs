@@ -13,9 +13,11 @@ namespace ExamenCGastos.Repositories
 {
     public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
     {
-        public UsuarioRepository(CGASTOSContext context) : base(context)
-        {
+        private readonly Utilities _utilities;
 
+        public UsuarioRepository(CGASTOSContext context, Utilities utilities) : base(context)
+        {
+            _utilities = utilities;
         }
 
         public async Task<List<Usuario>> GetUsuarioAsync()
@@ -27,22 +29,24 @@ namespace ExamenCGastos.Repositories
         {
             return await Context.Usuarios.FirstOrDefaultAsync(x => x.IdUsuario == usuarioId);
         }
+
         public async Task<StoredProcedureDto?> CreateNewUsuarioAsync(UsuarioDTO resource)
         {
             var paramNombre = new SqlParameter("@Nombre", resource.Nombre);
             var paramCorreo = new SqlParameter("@Correo", resource.Correo);
-            var paramClave = new SqlParameter("@Clave", resource.Clave);
+            var paramClave = new SqlParameter("@Clave", _utilities.EncriptarContrasena(resource.Clave));
 
             var responseSp = await Context.Set<StoredProcedureDto>().FromSql($"EXECUTE [dbo].[spNewUsuario] {paramNombre}, {paramCorreo}, {paramClave}").ToListAsync();
 
             return responseSp.FirstOrDefault();
         }
+
         public async Task<StoredProcedureDto?> UpdateUsuarioAsync(UsuarioDTO resource)
         {
             var paramUsuarioId = new SqlParameter("@IdUsuario", resource.IdUsuario);
             var paramNombre = new SqlParameter("@Nombre", resource.Nombre);
             var paramCorreo = new SqlParameter("@Correo", resource.Correo);
-            var paramClave = new SqlParameter("@Clave", resource.Clave);
+            var paramClave = new SqlParameter("@Clave", _utilities.EncriptarContrasena(resource.Clave));
 
             var responseSp = await Context.Set<StoredProcedureDto>().FromSql($"EXECUTE [dbo].[spUpdateUsuario] {paramUsuarioId}, {paramNombre}, {paramCorreo}, {paramClave}").ToListAsync();
 
