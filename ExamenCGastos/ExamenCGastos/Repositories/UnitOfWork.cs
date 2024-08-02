@@ -6,6 +6,7 @@ namespace ExamenCGastos.Repositories
     public class UnitOfWork : IUnitOfWork
     {
         private readonly CGASTOSContext _context;
+        private readonly Utilities _utilities;
 
         private IParametroRepository _parametro = default!;
         private IUsuarioRepository _usuario = default!;
@@ -14,7 +15,7 @@ namespace ExamenCGastos.Repositories
         private IProveedorRepository _proveedor = default!;
 
         public IParametroRepository Parametro => _parametro ?? new ParametroRepository(_context);
-        public IUsuarioRepository Usuario => _usuario ?? new UsuarioRepository(_context);
+        public IUsuarioRepository Usuario => _usuario ?? new UsuarioRepository(_context, _utilities);
         public IInventarioRepository Inventario => _inventario ?? new InventarioRepository(_context);
         public IProductoRepository Producto => _producto ?? new ProductoRepository(_context);
         public IProveedorRepository Proveedor => _proveedor ?? new ProveedorRepository(_context);
