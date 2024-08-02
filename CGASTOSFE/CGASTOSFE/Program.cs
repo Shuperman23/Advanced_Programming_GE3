@@ -1,7 +1,14 @@
+using CGASTOSFE.DTOs;
+using CGASTOSFE.RestApis;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.Configure<ControlGastosApiSettingsDto>(builder.Configuration.GetSection("ControlGastosAPI"));
+
+builder.Services.AddSingleton<ControlGastosAPI>();
 
 var app = builder.Build();
 
