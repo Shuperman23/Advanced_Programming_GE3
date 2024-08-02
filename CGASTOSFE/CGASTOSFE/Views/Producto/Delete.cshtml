@@ -1,0 +1,34 @@
+﻿@model CGASTOSFE.DTOs.ProductoDto
+@{
+    ViewData["Title"] = "Eliminar Producto";
+}
+
+<h1>Eliminar Producto</h1>
+
+<h3>¿Estás seguro de que quieres eliminar este producto?</h3>
+
+<div>
+    
+    <h4>@Model.Nombre</h4>
+    
+    <dl class="row">
+        <dt class="col-sm-2">ID</dt>
+        <dd class="col-sm-10">@Model.Id</dd>
+        <dt class="col-sm-2">Nombre</dt>
+        <dd class="col-sm-10">@Model.Nombre</dd>
+        <dt class="col-sm-2">ProveedorId</dt>
+        <dd class="col-sm-10">@Model.ProveedorId</dd>
+    </dl>
+
+    <form asp-action="DeleteConfirmed" method="post">
+        
+        <input type="hidden" name="id" value="@Model.Id" />
+
+        
+        <div class="form-group">
+            <input type="submit" value="Eliminar" class="btn btn-danger" />
+        </div>
+    </form>
+
+    <a class="btn btn-secondary" asp-action="Index">Volver</a>
+</div>
