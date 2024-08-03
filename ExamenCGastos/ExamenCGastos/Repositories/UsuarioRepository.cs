@@ -34,7 +34,7 @@ namespace ExamenCGastos.Repositories
         {
             var paramNombre = new SqlParameter("@Nombre", resource.Nombre);
             var paramCorreo = new SqlParameter("@Correo", resource.Correo);
-            var paramClave = new SqlParameter("@Clave", _utilities.EncriptarContrasena(resource.Clave));
+            var paramClave = new SqlParameter("@Clave", resource.Clave);
 
             var responseSp = await Context.Set<StoredProcedureDto>().FromSql($"EXECUTE [dbo].[spNewUsuario] {paramNombre}, {paramCorreo}, {paramClave}").ToListAsync();
 
@@ -46,7 +46,7 @@ namespace ExamenCGastos.Repositories
             var paramUsuarioId = new SqlParameter("@IdUsuario", resource.IdUsuario);
             var paramNombre = new SqlParameter("@Nombre", resource.Nombre);
             var paramCorreo = new SqlParameter("@Correo", resource.Correo);
-            var paramClave = new SqlParameter("@Clave", _utilities.EncriptarContrasena(resource.Clave));
+            var paramClave = new SqlParameter("@Clave", resource.Clave);
 
             var responseSp = await Context.Set<StoredProcedureDto>().FromSql($"EXECUTE [dbo].[spUpdateUsuario] {paramUsuarioId}, {paramNombre}, {paramCorreo}, {paramClave}").ToListAsync();
 

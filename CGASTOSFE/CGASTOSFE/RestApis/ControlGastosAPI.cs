@@ -17,20 +17,20 @@ namespace CGASTOSFE.RestApis
         public ControlGastosAPI(IOptions<ControlGastosApiSettingsDto> options)
         {
             _apiBaseUrl = options.Value.ApiBaseurl;
-            _authUser = options.Value.AuthUser;
-            _authPass = options.Value.AuthPass;
+            _authUser = options.Value.AuthUser;//ya no existiria
+            _authPass = options.Value.AuthPass;//ya no existiria
 
             AuthenticateAsync().GetAwaiter().GetResult();
         }
 
-        private async Task<bool> AuthenticateAsync()
+        private async Task<bool> AuthenticateAsync()//volver publico y consumirlo desde el login del frontend
         {
             var client = new RestClient(_apiBaseUrl);
             var request = new RestRequest("Auth", Method.Post);
             request.AddJsonBody(new LoginDto
             {
-                Username = _authUser,
-                Password = _authPass
+                Username = _authUser,///no seria necesario el username
+                Password = _authPass///no seria necesario el password
             });
 
             var response = await client.ExecuteAsync<LoginResponseDto>(request);
@@ -38,7 +38,7 @@ namespace CGASTOSFE.RestApis
             if (response.IsSuccessful && response.Data != null)
             {
                 _token = response.Data.Token;
-                _tokenExpirationTime = DateTime.UtcNow.AddMinutes(5);
+                _tokenExpirationTime = DateTime.UtcNow.AddMinutes(5);//cambiar a 4 horas
                 return true;
             }
 
