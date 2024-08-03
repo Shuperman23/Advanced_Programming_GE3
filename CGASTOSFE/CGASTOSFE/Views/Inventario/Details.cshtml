@@ -1,0 +1,30 @@
+﻿@model CGASTOSFE.DTOs.InventarioDto
+
+@{
+    ViewData["Title"] = "Detalles del Inventario";
+}
+
+<h1>Detalles del Inventario</h1>
+
+<div>
+    
+    <h4>@Model.ProductoId</h4>
+
+    <dl class="row">
+        <dt class="col-sm-2">ID</dt>
+        <dd class="col-sm-10">@Model.Id</dd>
+        <dt class="col-sm-2">Producto</dt>
+        <dd class="col-sm-10">@Model.ProductoId</dd>
+        <dt class="col-sm-2">Cantidad</dt>
+        <dd class="col-sm-10">@Model.Cantidad</dd>
+        <dt class="col-sm-2">Precio</dt>
+        <dd class="col-sm-10">@Model.Precio</dd>
+        <dt class="col-sm-2">FechaMovimiento</dt>
+        <dd class="col-sm-10">@Model.FechaMovimiento</dd>
+        <dt class="col-sm-2">FechaCaducidad</dt>
+        <dd class="col-sm-10">@Model.FechaCaducidad</dd>
+    </dl>
+
+    <a class="btn btn-secondary" asp-action="Index">Volver</a>
+</div>
+

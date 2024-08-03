@@ -65,6 +65,7 @@ namespace CGASTOSFE.RestApis
             return request;
         }
 
+        //******************************************************PRODUCTODTO******************************************************//
         public async Task<List<ProductoDto>> GetProductosAsync()
         {
             var client = new RestClient(_apiBaseUrl);
@@ -129,6 +130,142 @@ namespace CGASTOSFE.RestApis
 
             return response.IsSuccessful;
         }
+
+        //******************************************************PROVEEDORDTO******************************************************//
+
+        public async Task<List<ProveedorDto>> GetProveedoresAsync()
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest("Proveedor", Method.Get);
+            AddAuthentication(request);
+
+            var response = await client.ExecuteAsync<List<ProveedorDto>>(request);
+
+            if (response.IsSuccessful && response.Data != null)
+            {
+                return response.Data;
+            }
+            throw new Exception(response.ErrorMessage);
+        }
+
+        public async Task<ProveedorDto> GetProveedoresAsync(int id)
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest($"Proveedor/{id}", Method.Get);
+            AddAuthentication(request);
+
+            var response = await client.ExecuteAsync<ProveedorDto>(request);
+
+            if (response.IsSuccessful && response.Data != null)
+            {
+                return response.Data;
+            }
+            throw new Exception(response.ErrorMessage);
+        }
+
+        public async Task<bool> PutProveedoresAsync(ProveedorDto proveedorDto)
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest("Proveedor", Method.Put);
+            request.AddJsonBody(proveedorDto);
+            AddAuthentication(request);
+
+            var response = await client.ExecuteAsync(request);
+
+            return response.IsSuccessful;
+        }
+
+        public async Task<bool> PostProveedoresAsync(ProveedorDto proveedorDto)
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest("Proveedor", Method.Post);
+            request.AddJsonBody(proveedorDto);
+            AddAuthentication(request);
+
+            var response = await client.ExecuteAsync(request);
+
+            return response.IsSuccessful;
+        }
+
+        public async Task<bool> DeleteProveedoresAsync(int id)
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest($"Proveedor/{id}", Method.Delete);
+            AddAuthentication(request);
+
+            var response = await client.ExecuteAsync(request);
+
+            return response.IsSuccessful;
+        }
+
+        //******************************************************INVENTARIODTO******************************************************//
+
+        public async Task<List<InventarioDto>> GetInventariosAsync()
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest("Inventario", Method.Get);
+            AddAuthentication(request);
+
+            var response = await client.ExecuteAsync<List<InventarioDto>>(request);
+
+            if (response.IsSuccessful && response.Data != null)
+            {
+                return response.Data;
+            }
+            throw new Exception(response.ErrorMessage);
+        }
+
+        public async Task<InventarioDto> GetInventariosAsync(int id)
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest($"Inventario/{id}", Method.Get);
+            AddAuthentication(request);
+
+            var response = await client.ExecuteAsync<InventarioDto>(request);
+
+            if (response.IsSuccessful && response.Data != null)
+            {
+                return response.Data;
+            }
+            throw new Exception(response.ErrorMessage);
+        }
+
+        public async Task<bool> PutInventariosAsync(InventarioDto inventarioDto)
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest("Inventario", Method.Put);
+            request.AddJsonBody(inventarioDto);
+            AddAuthentication(request);
+
+            var response = await client.ExecuteAsync(request);
+
+            return response.IsSuccessful;
+        }   
+
+        public async Task<bool> PostInventariosAsync(InventarioDto inventarioDto)
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest("Inventario", Method.Post);
+            request.AddJsonBody(inventarioDto);
+            AddAuthentication(request);
+
+            var response = await client.ExecuteAsync(request);
+
+            return response.IsSuccessful;
+        }
+
+        public async Task<bool> DeleteInventariosAsync(int id)
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest($"Inventario/{id}", Method.Delete);
+            AddAuthentication(request);
+
+            var response = await client.ExecuteAsync(request);
+
+            return response.IsSuccessful;
+        }
+
+        //************************************************************************************************************//
     }
 
 }
