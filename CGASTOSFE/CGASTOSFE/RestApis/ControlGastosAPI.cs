@@ -16,21 +16,19 @@ namespace CGASTOSFE.RestApis
 
         public ControlGastosAPI(IOptions<ControlGastosApiSettingsDto> options)
         {
-            _apiBaseUrl = options.Value.ApiBaseurl;
+            _apiBaseUrl = options.Value.ApiBaseUrl;
             _authUser = options.Value.AuthUser;//ya no existiria
             _authPass = options.Value.AuthPass;//ya no existiria
-
-            AuthenticateAsync().GetAwaiter().GetResult();
         }
 
-        private async Task<bool> AuthenticateAsync()//volver publico y consumirlo desde el login del frontend
+        public async Task<bool> AuthenticateAsync(LoginDto loginDto)//volver publico y consumirlo desde el login del frontend
         {
             var client = new RestClient(_apiBaseUrl);
             var request = new RestRequest("Auth", Method.Post);
             request.AddJsonBody(new LoginDto
             {
-                Username = _authUser,///no seria necesario el username
-                Password = _authPass///no seria necesario el password
+                Correo = loginDto.Correo,///no seria necesario el username
+                Clave = loginDto.Clave,///no seria necesario el password
             });
 
             var response = await client.ExecuteAsync<LoginResponseDto>(request);
@@ -38,24 +36,22 @@ namespace CGASTOSFE.RestApis
             if (response.IsSuccessful && response.Data != null)
             {
                 _token = response.Data.Token;
-                _tokenExpirationTime = DateTime.UtcNow.AddMinutes(5);//cambiar a 4 horas
                 return true;
             }
 
             return false;
         }
 
-        private async Task EnsureTokenIsValid()
-        {
-            if (_token == null || DateTime.UtcNow >= _tokenExpirationTime)
-            {
-                await AuthenticateAsync();
-            }
-        }
+        //private async Task EnsureTokenIsValid()
+        //{
+        //    if (_token == null || DateTime.UtcNow >= _tokenExpirationTime)
+        //    {
+        //        await AuthenticateAsync();
+        //    }
+        //}
 
         private RestRequest AddAuthentication(RestRequest request)
         {
-            EnsureTokenIsValid().GetAwaiter().GetResult();
 
             if (_token != null)
             {

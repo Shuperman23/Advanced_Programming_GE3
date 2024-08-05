@@ -7,6 +7,8 @@
 
         IParametroRepository Parametro { get; }
 
+        IAuthRepository Auth { get; }
+
         IInventarioRepository Inventario { get; }
 
         IProductoRepository Producto { get; }
