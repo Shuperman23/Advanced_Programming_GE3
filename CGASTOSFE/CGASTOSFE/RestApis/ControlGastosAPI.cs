@@ -24,7 +24,7 @@ namespace CGASTOSFE.RestApis
         public async Task<bool> AuthenticateAsync(LoginDto loginDto)//volver publico y consumirlo desde el login del frontend
         {
             var client = new RestClient(_apiBaseUrl);
-            var request = new RestRequest("Auth", Method.Post);
+            var request = new RestRequest("/Acceso/Login", Method.Post);
             request.AddJsonBody(new LoginDto
             {
                 Correo = loginDto.Correo,///no seria necesario el username

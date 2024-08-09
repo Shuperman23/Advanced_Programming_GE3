@@ -15,18 +15,18 @@ namespace ExamenCGastos.Repositories
             _configuration = configuration;
         }
 
-        public async Task<string?> AuthenticateAsync(string username, string password)
+        public async Task<string?> AuthenticateAsync(string correo, string clave)
         {
             var jwtSettings = _configuration.GetSection("Jwt");
-            var validUsername = jwtSettings["Username"];
-            var validPassword = jwtSettings["Password"];
+            var validUsername = jwtSettings["correo"];
+            var validPassword = jwtSettings["clave"];
 
             if (string.IsNullOrEmpty(validUsername) || string.IsNullOrEmpty(validPassword))
             {
                 throw new Exception("Username or Password is not configured in the appsettings.json file.");
             }
 
-            if (username == validUsername && password == validPassword)
+            if (correo == validUsername && clave == validPassword)
             {
                 return await Task.FromResult(GenerateToken());
             }
@@ -51,7 +51,7 @@ namespace ExamenCGastos.Repositories
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.Name, jwtSettings["Username"]!)
+                    new Claim(ClaimTypes.Name, jwtSettings["correo"]!)
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(double.Parse(tokenLifetime.Split(":")[1])),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(keyBytes), SecurityAlgorithms.HmacSha256Signature)

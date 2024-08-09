@@ -75,7 +75,7 @@ namespace ExamenCGastos.Controllers
 
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login(LoginDTO objeto)
+        public async Task<IActionResult> Login(LoginDto objeto)
         {
             try
             {

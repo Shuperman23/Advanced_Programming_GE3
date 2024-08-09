@@ -18,7 +18,7 @@ namespace ExamenCGastos.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginDto loginRequest)
         {
-            var token = await _unitOfWork.Auth.AuthenticateAsync(loginRequest.Username, loginRequest.Password);
+            var token = await _unitOfWork.Auth.AuthenticateAsync(loginRequest.Correo, loginRequest.Clave);
 
             if (token == null)
             {
