@@ -65,7 +65,7 @@ namespace CGASTOSFE.RestApis
         public async Task<List<ProductoDto>> GetProductosAsync()
         {
             var client = new RestClient(_apiBaseUrl);
-            var request = new RestRequest("Producto", Method.Get);
+            var request = new RestRequest("/Producto/Lista", Method.Get);
             AddAuthentication(request);
 
             var response = await client.ExecuteAsync<List<ProductoDto>>(request);
@@ -132,7 +132,7 @@ namespace CGASTOSFE.RestApis
         public async Task<List<ProveedorDto>> GetProveedoresAsync()
         {
             var client = new RestClient(_apiBaseUrl);
-            var request = new RestRequest("Proveedor", Method.Get);
+            var request = new RestRequest("/Proveedor/lista", Method.Get);
             AddAuthentication(request);
 
             var response = await client.ExecuteAsync<List<ProveedorDto>>(request);
