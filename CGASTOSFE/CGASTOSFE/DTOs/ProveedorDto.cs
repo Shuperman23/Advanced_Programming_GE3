@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CGASTOSFE.DTOs
 {
     public class ProveedorDto
     {
-        [Range(1, int.MaxValue, ErrorMessage = "El Id no puede ser un número negativo.")]
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "El nombre es requerido.")]
