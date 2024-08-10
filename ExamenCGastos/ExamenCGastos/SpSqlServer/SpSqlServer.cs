@@ -218,6 +218,72 @@ BEGIN
 
     SELECT @Resultado AS Resultado;
 END
+...............................................................................................................................
+
+CREATE PROCEDURE [dbo].[spNewUsuario]
+    @Nombre NVARCHAR(100),
+    @Correo NVARCHAR(100),
+    @Clave NVARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
+    DECLARE @Resultado INT;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        INSERT INTO Usuario (Nombre, Correo, Clave)
+        VALUES (@Nombre, @Correo, @Clave);
+
+        COMMIT TRANSACTION;
+        SET @Resultado = 1;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+        BEGIN
+            ROLLBACK TRANSACTION;
+        END
+        SET @Resultado = 0;
+    END CATCH
+
+    SELECT @Resultado AS Resultado;
+END
+............................................................................................................................
+
+CREATE PROCEDURE [dbo].[spUpdateUsuario]
+    @UsuarioID INT,
+    @Nombre NVARCHAR(100),
+    @Correo NVARCHAR(100),
+    @Clave NVARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
+    DECLARE @Resultado INT;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        UPDATE Usuario
+        SET Nombre = @Nombre, Correo = @Correo, Clave = @Clave
+        WHERE IdUsuario = @UsuarioID;
+
+        COMMIT TRANSACTION;
+        SET @Resultado = 1;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+        BEGIN
+            ROLLBACK TRANSACTION;
+        END
+        SET @Resultado = 0;
+    END CATCH
+
+    SELECT @Resultado AS Resultado;
+END
 
 
  

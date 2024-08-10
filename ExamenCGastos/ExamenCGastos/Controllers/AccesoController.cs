@@ -104,5 +104,64 @@ namespace ExamenCGastos.Controllers
                 throw;
             }
         }
+        [HttpPost]
+        [Route("VerificarUsuario")]
+        public async Task<IActionResult> VerificarUsuario(VerificarUsuarioDTO objeto)
+        {
+            try
+            {
+                var usuarioEncontrado = await _controlGastosContext.Usuarios.FirstOrDefaultAsync(u => u.Correo == objeto.Correo);
+
+                if (usuarioEncontrado == null)
+                {
+                    return BadRequest("No se encontró ese usuario.");
+                }
+
+                return StatusCode(StatusCodes.Status200OK, new { isSuccess = true, message = "Usuario encontrado." });
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+
+        [HttpPut]
+        [Route("CambiarContrasena")]
+        public async Task<IActionResult> CambiarContrasena(CambiarContrasenaDTO objeto)
+        {
+            try
+            {
+                var usuarioEncontrado = await _controlGastosContext.Usuarios.FirstOrDefaultAsync(u => u.Correo == objeto.Correo);
+
+                if (usuarioEncontrado == null)
+                {
+                    return BadRequest("No se encontró ese usuario.");
+                }
+
+                usuarioEncontrado.Clave = _utilidades.EncriptarContrasena(objeto.NuevaClave); // Usar bcrypt para encriptar la nueva contraseña
+
+                _controlGastosContext.Usuarios.Update(usuarioEncontrado);
+                await _controlGastosContext.SaveChangesAsync();
+
+                string emailBody = $@"
+         <html>
+          <body>
+           <h1> Hola, {usuarioEncontrado.Nombre} </h1>
+          <p> Tu contraseña ha sido actualizada. </p>
+        </body>
+       </html>";
+
+                await _configuracionesEmail.SendEmailAsync(usuarioEncontrado.Correo, "Contraseña Actualizada", emailBody);
+
+                return StatusCode(StatusCodes.Status200OK, new { isSuccess = true });
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
     }
 }
+    
