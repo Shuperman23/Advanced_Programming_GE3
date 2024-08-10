@@ -1,4 +1,9 @@
-﻿using CGASTOSFE.DTOs;
+﻿using System;
+using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+using CGASTOSFE.DTOs;
 using Microsoft.Extensions.Options;
 using RestSharp;
 
@@ -132,7 +137,7 @@ namespace CGASTOSFE.RestApis
         public async Task<List<ProveedorDto>> GetProveedoresAsync()
         {
             var client = new RestClient(_apiBaseUrl);
-            var request = new RestRequest("/Proveedor/lista", Method.Get);
+            var request = new RestRequest("/Proveedores", Method.Get);
             AddAuthentication(request);
 
             var response = await client.ExecuteAsync<List<ProveedorDto>>(request);
@@ -147,7 +152,7 @@ namespace CGASTOSFE.RestApis
         public async Task<ProveedorDto> GetProveedoresAsync(int id)
         {
             var client = new RestClient(_apiBaseUrl);
-            var request = new RestRequest($"Proveedor/{id}", Method.Get);
+            var request = new RestRequest($"Proveedores/{id}", Method.Get);
             AddAuthentication(request);
 
             var response = await client.ExecuteAsync<ProveedorDto>(request);
@@ -162,7 +167,7 @@ namespace CGASTOSFE.RestApis
         public async Task<bool> PutProveedoresAsync(ProveedorDto proveedorDto)
         {
             var client = new RestClient(_apiBaseUrl);
-            var request = new RestRequest("Proveedor", Method.Put);
+            var request = new RestRequest("Proveedores", Method.Put);
             request.AddJsonBody(proveedorDto);
             AddAuthentication(request);
 
@@ -174,7 +179,7 @@ namespace CGASTOSFE.RestApis
         public async Task<bool> PostProveedoresAsync(ProveedorDto proveedorDto)
         {
             var client = new RestClient(_apiBaseUrl);
-            var request = new RestRequest("Proveedor", Method.Post);
+            var request = new RestRequest("Proveedores", Method.Post);
             request.AddJsonBody(proveedorDto);
             AddAuthentication(request);
 
@@ -186,7 +191,7 @@ namespace CGASTOSFE.RestApis
         public async Task<bool> DeleteProveedoresAsync(int id)
         {
             var client = new RestClient(_apiBaseUrl);
-            var request = new RestRequest($"Proveedor/{id}", Method.Delete);
+            var request = new RestRequest($"Proveedores/{id}", Method.Delete);
             AddAuthentication(request);
 
             var response = await client.ExecuteAsync(request);
@@ -199,7 +204,7 @@ namespace CGASTOSFE.RestApis
         public async Task<List<InventarioDto>> GetInventariosAsync()
         {
             var client = new RestClient(_apiBaseUrl);
-            var request = new RestRequest("Inventario", Method.Get);
+            var request = new RestRequest("Inventario/Lista", Method.Get);
             AddAuthentication(request);
 
             var response = await client.ExecuteAsync<List<InventarioDto>>(request);

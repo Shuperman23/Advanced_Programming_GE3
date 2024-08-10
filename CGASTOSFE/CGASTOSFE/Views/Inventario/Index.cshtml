@@ -1,0 +1,45 @@
+﻿@model IEnumerable<CGASTOSFE.DTOs.InventarioDto>
+@{
+
+    ViewData["Title"] = "Inventario";
+}
+
+<h1>Inventario</h1>
+
+<p>
+    <a class="btn btn-primary" asp-action="Create">Ingresar producto a inventario</a>
+</p>
+
+<table class="table">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>ProductoId</th>
+            <th>TipoMovimiento</th>
+            <th>Cantidad</th>
+            <th>Precio</th>
+            <th>FechaMovimiento</th>
+            <th>FechaCaducidad</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var inventario in Model)
+        {
+            <tr>
+
+                <td>@inventario.Id</td>
+                <td>@inventario.ProductoId</td>
+                <td>@inventario.TipoMovimiento</td>
+                <td>@inventario.Cantidad</td>
+                <td>@inventario.Precio</td>
+                <td>@inventario.FechaMovimiento</td>
+                <td>@inventario.FechaCaducidad</td>
+                <td>
+                    <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id=" @inventario.Id">Detalles</a>
+                    <a class="btn btn-warning btn-sm" asp-action="Edit" asp-route-id=" @inventario.Id">Editar</a>
+                    <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@inventario.Id">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+
