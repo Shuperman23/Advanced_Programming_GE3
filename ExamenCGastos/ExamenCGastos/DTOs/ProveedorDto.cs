@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ExamenCGastos.DTOs
 {
     public class ProveedorDto
     {
-        [Range(1, int.MaxValue, ErrorMessage = "El Id no puede ser un número negativo.")]
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "El nombre es requerido.")]
@@ -22,5 +24,6 @@ namespace ExamenCGastos.DTOs
         [Required(ErrorMessage = "El correo electrónico de contacto es requerido.")]
         [EmailAddress(ErrorMessage = "El correo electrónico de contacto no es una dirección de correo electrónico válida.")]
         public string EmailContacto { get; set; } = null!;
+
     }
 }

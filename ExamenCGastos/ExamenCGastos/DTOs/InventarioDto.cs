@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ExamenCGastos.DTOs
 {
     public class InventarioDto
     {
-        [Range(1, int.MaxValue, ErrorMessage = "El Id no puede ser un número negativo.")]
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "El ProductoId no puede ser un número negativo.")]
