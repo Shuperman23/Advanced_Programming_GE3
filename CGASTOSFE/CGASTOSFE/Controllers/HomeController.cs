@@ -1,15 +1,15 @@
-using CGASTOSFE.Models;
 using CGASTOSFE.DTOs;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using CGASTOSFE.Models;
 using CGASTOSFE.RestApis;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using System.Diagnostics;
 
 namespace CGASTOSFE.Controllers
 {
     public class HomeController : Controller
     {
-        private IOptions<ControlGastosApiSettingsDto> _options;
+        private readonly IOptions<ControlGastosApiSettingsDto> _options;
         private readonly ILogger<HomeController> _logger;
         private readonly ControlGastosAPI _controlGastosAPI;
 
@@ -22,12 +22,22 @@ namespace CGASTOSFE.Controllers
 
         public IActionResult Index()
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserToken")))
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            return View();
+        }
+
+        public IActionResult Login()
+        {
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(LoginDto loginDto)
+        public async Task<IActionResult> Login(LoginDto loginDto)
         {
             if (ModelState.IsValid)
             {
@@ -35,12 +45,22 @@ namespace CGASTOSFE.Controllers
 
                 if (success)
                 {
+                    HttpContext.Session.SetString("UserToken", _controlGastosAPI.GetToken());
                     return RedirectToAction(nameof(Index));
                 }
-                ModelState.AddModelError("", "No se pudo encontrar el usuario.");
+                else
+                {
+                    ModelState.AddModelError("", "Credenciales incorrectas o usuario no encontrado.");
+                }
             }
 
-            return View();
+            return View(loginDto);
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Remove("UserToken");
+            return RedirectToAction(nameof(Login));
         }
 
         public IActionResult Privacy()

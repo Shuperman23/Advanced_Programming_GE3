@@ -25,25 +25,26 @@ namespace CGASTOSFE.RestApis
             _authUser = options.Value.AuthUser;//ya no existiria
             _authPass = options.Value.AuthPass;//ya no existiria
         }
+        public string? GetToken()
+        {
+            return _token;
+        }
 
-        public async Task<bool> AuthenticateAsync(LoginDto loginDto)//volver publico y consumirlo desde el login del frontend
+        public async Task<bool> AuthenticateAsync(LoginDto loginDto)
         {
             var client = new RestClient(_apiBaseUrl);
             var request = new RestRequest("/Acceso/Login", Method.Post);
-            request.AddJsonBody(new LoginDto
-            {
-                Correo = loginDto.Correo,///no seria necesario el username
-                Clave = loginDto.Clave,///no seria necesario el password
-            });
+            request.AddJsonBody(loginDto);
 
-            var response = await client.ExecuteAsync<LoginResponseDto>(request);
+            var response = await client.ExecuteAsync<ApiRequestResultDto<string>>(request);
 
-            if (response.IsSuccessful && response.Data != null)
+            if (response.IsSuccessful && response.Data != null && response.Data.Success)
             {
-                _token = response.Data.Token;
+                _token = response.Data.Result;  // Aquí asignas el token desde el Result
                 return true;
             }
 
+            // Manejar el caso en que la autenticación falle
             return false;
         }
 
@@ -54,6 +55,7 @@ namespace CGASTOSFE.RestApis
         //        await AuthenticateAsync();
         //    }
         //}
+        
 
         private RestRequest AddAuthentication(RestRequest request)
         {

@@ -83,27 +83,32 @@ namespace ExamenCGastos.Controllers
                     .Where(u => u.Correo == objeto.Correo)
                     .FirstOrDefaultAsync();
 
-                if (usuarioEncontrado == null)
+                if (usuarioEncontrado == null || !_utilidades.VerificarContrasena(objeto.Clave, usuarioEncontrado.Clave))
                 {
-                    return StatusCode(StatusCodes.Status200OK, new { isSuccess = false, message = "No se encontró ese usuario." });
+                    return Ok(new ApiRequestResultDto<string>
+                    {
+                        Success = false,
+                        Message = "Usuario o contraseña incorrectos."
+                    });
                 }
 
-
-                if (usuarioEncontrado == null || usuarioEncontrado.Clave == null || !_utilidades.VerificarContrasena(objeto.Clave, usuarioEncontrado.Clave)) // Usar bcrypt para verificar la contraseña
+                var token = _utilidades.generarJWT(usuarioEncontrado);
+                return Ok(new ApiRequestResultDto<string>
                 {
-                    return StatusCode(StatusCodes.Status200OK, new { isSuccess = false, message = "Contraseña Incorrecta." });
-                }
-                else
-                {
-                    return StatusCode(StatusCodes.Status200OK, new { isSuccess = true, token = _utilidades.generarJWT(usuarioEncontrado) });
-                }
+                    Success = true,
+                    Result = token
+                });
             }
             catch (Exception ex)
             {
-
-                throw;
+                return StatusCode(StatusCodes.Status500InternalServerError, new ApiRequestResultDto<string>
+                {
+                    Success = false,
+                    Message = "Ocurrió un error interno."
+                });
             }
         }
+
         [HttpPost]
         [Route("VerificarUsuario")]
         public async Task<IActionResult> VerificarUsuario(VerificarUsuarioDTO objeto)
