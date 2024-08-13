@@ -47,6 +47,7 @@ namespace CGASTOSFE.Controllers
 
                 if (success)
                 {
+                    HttpContext.Session.SetString("UserName", loginDto.Correo);
                     HttpContext.Session.SetString("UserToken", _controlGastosAPI.GetToken());
                     return RedirectToAction(nameof(Index));
                 }
