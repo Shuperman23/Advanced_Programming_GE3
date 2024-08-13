@@ -118,7 +118,7 @@ namespace CGASTOSFE.Controllers
             return View(cambiarContrasenaDto);
         }
 
-
+        [Authorize(Policy = "CustomPolicy")]
         public IActionResult Privacy()
         {
             return View();
