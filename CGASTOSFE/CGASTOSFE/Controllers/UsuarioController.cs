@@ -6,7 +6,7 @@ using CGASTOSFE.DTOs;
 
 namespace CGASTOSFE.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "CustomPolicy")]
     public class UsuarioController : Controller
     {
         private readonly ControlGastosAPI _controlGastosAPI;
