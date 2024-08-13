@@ -283,7 +283,73 @@ namespace CGASTOSFE.RestApis
             return response.IsSuccessful;
         }
 
-        //************************************************************************************************************//
+        //***********************************************USUARIODTO*******************************************************//
+
+
+        public async Task<List<UsuarioDTO>> GetUsuariosAsync()
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest("Usuario", Method.Get);
+            AddAuthentication(request);
+
+            var response = await client.ExecuteAsync<List<UsuarioDTO>>(request);
+
+            if (response.IsSuccessful && response.Data != null)
+            {
+                return response.Data;
+            }
+            throw new Exception(response.ErrorMessage);
+        }
+
+        public async Task<UsuarioDTO> GetUsuariosAsync(int id)
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest($"Usuario/{id}", Method.Get);
+            AddAuthentication(request);
+
+            var response = await client.ExecuteAsync<UsuarioDTO>(request);
+
+            if (response.IsSuccessful && response.Data != null)
+            {
+                return response.Data;
+            }
+            throw new Exception(response.ErrorMessage);
+        }
+
+        public async Task<bool> PutUsuariosAsync(UsuarioDTO usuarioDTO)
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest("Usuario", Method.Put);
+            request.AddJsonBody(usuarioDTO);
+            AddAuthentication(request);
+
+            var response = await client.ExecuteAsync(request);
+
+            return response.IsSuccessful;
+        }
+
+        public async Task<bool> PostUsuariosAsync(UsuarioDTO usuarioDTO)
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest("Usuario", Method.Post);
+            request.AddJsonBody(usuarioDTO);
+            AddAuthentication(request);
+
+            var response = await client.ExecuteAsync(request);
+
+            return response.IsSuccessful;
+        }
+
+        public async Task<bool> DeleteUsuariosAsync(int id)
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest($"Usuario/{id}", Method.Delete);
+            AddAuthentication(request);
+
+            var response = await client.ExecuteAsync(request);
+
+            return response.IsSuccessful;
+        }
     }
 
 }

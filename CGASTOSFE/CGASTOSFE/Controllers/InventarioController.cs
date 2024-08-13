@@ -71,7 +71,7 @@ namespace CGASTOSFE.Controllers
             }
 
             return View(inventarioDto);
-        }
+        }   
 
         public async Task<IActionResult> Edit(int id)
         {
@@ -111,17 +111,17 @@ namespace CGASTOSFE.Controllers
             return View(inventarioDto);
         }
 
-        public async Task<IActionResult> Delete(int id)
-        {
-            var inventario = await _controlGastosAPI.GetInventariosAsync(id);
-
-            if (inventario == null)
+            public async Task<IActionResult> Delete(int id)
             {
-                return NotFound();
-            }
+                var inventario = await _controlGastosAPI.GetInventariosAsync(id);
 
-            return View(inventario);
-        }
+                if (inventario == null)
+                {
+                    return NotFound();
+                }
+
+                return View(inventario);
+            }
 
         [HttpPost, ActionName("DeleteConfirmed")]
         [ValidateAntiForgeryToken]
