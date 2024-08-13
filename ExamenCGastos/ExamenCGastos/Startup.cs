@@ -43,47 +43,84 @@ namespace ExamenCGastos
             //   services.AddSingleton<EmailService>();
 
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddJwtBearer(options =>
-                    {
-                        options.RequireHttpsMetadata = false;
-                        options.SaveToken = true;
-                        options.TokenValidationParameters = new TokenValidationParameters
-                        {
-                            ValidateIssuerSigningKey = true,
-                            ValidateIssuer = false,
-                            ValidateAudience = false,
-                            ValidateLifetime = true,
-                            ClockSkew = TimeSpan.Zero,
-                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:key"]))
-                        };
-                    });
-                // Configura la generación de la documentación Swagger
-                services.AddSwaggerGen(c =>
-                {
-                    // Agrega la información básica del API
-                    c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPI", Version = "1.0.0.4" });
-
-                    // Configura el esquema de seguridad Bearer
-                    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //        .AddJwtBearer(options =>
+            //        {
+            //            options.RequireHttpsMetadata = false;
+            //            options.SaveToken = true;
+            //            options.TokenValidationParameters = new TokenValidationParameters
+            //            {
+            //                ValidateIssuerSigningKey = true,
+            //                ValidateIssuer = false,
+            //                ValidateAudience = false,
+            //                ValidateLifetime = true,
+            //                ClockSkew = TimeSpan.Zero,
+            //                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:key"]))
+            //            };
+            //        });
+            // Configura la generación de la documentación Swagger
+            services.AddSwaggerGen(c =>
             {
-                new OpenApiSecurityScheme
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPI", Version = "1.0.0.4" });
+
+                var securityScheme = new OpenApiSecurityScheme
                 {
+                    Name = "Authorization",
+                    BearerFormat = "JWT",
+                    Scheme = "bearer",
+                    Description = "Specify the authorization token.",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
                     Reference = new OpenApiReference
                     {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
+                        Id = "Bearer",
+                        Type = ReferenceType.SecurityScheme
                     }
-                },
-                Array.Empty<string>()
-            }
-        });
-                });
+                };
 
-                // Configura AutoMapper
-                services.AddAutoMapper(typeof(Startup));
+                c.AddSecurityDefinition("Bearer", securityScheme);
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        securityScheme,
+                        Array.Empty<string>()
+                    }
+                });
+            });
+
+            // Configura AutoMapper
+            services.AddAutoMapper(typeof(Startup));
+            var jwtSettings = Configuration.GetSection("Jwt");
+            var key = jwtSettings["Key"];
+
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new Exception("JWT Key is not configured in the appsettings.json file.");
             }
+
+            var keyBytes = Encoding.ASCII.GetBytes(key);
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = true;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
+        }
 
             // Método para configurar la aplicación y el entorno de ejecución
             public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

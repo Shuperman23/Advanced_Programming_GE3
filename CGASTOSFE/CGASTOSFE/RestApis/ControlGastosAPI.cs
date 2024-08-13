@@ -16,46 +16,44 @@ namespace CGASTOSFE.RestApis
 
         public ControlGastosAPI(IOptions<ControlGastosApiSettingsDto> options)
         {
-            _apiBaseUrl = options.Value.ApiBaseurl;
+            _apiBaseUrl = options.Value.ApiBaseUrl;
             _authUser = options.Value.AuthUser;//ya no existiria
             _authPass = options.Value.AuthPass;//ya no existiria
-
-            AuthenticateAsync().GetAwaiter().GetResult();
+        }
+        public string? GetToken()
+        {
+            return _token;
         }
 
-        private async Task<bool> AuthenticateAsync()//volver publico y consumirlo desde el login del frontend
+        public async Task<bool> AuthenticateAsync(LoginDto loginDto)
         {
             var client = new RestClient(_apiBaseUrl);
-            var request = new RestRequest("Auth", Method.Post);
-            request.AddJsonBody(new LoginDto
-            {
-                Username = _authUser,///no seria necesario el username
-                Password = _authPass///no seria necesario el password
-            });
+            var request = new RestRequest("/Acceso/Login", Method.Post);
+            request.AddJsonBody(loginDto);
 
-            var response = await client.ExecuteAsync<LoginResponseDto>(request);
+            var response = await client.ExecuteAsync<ApiRequestResultDto<string>>(request);
 
-            if (response.IsSuccessful && response.Data != null)
+            if (response.IsSuccessful && response.Data != null && response.Data.Success)
             {
-                _token = response.Data.Token;
-                _tokenExpirationTime = DateTime.UtcNow.AddMinutes(5);//cambiar a 4 horas
+                _token = response.Data.Result;  // Aquí asignas el token desde el Result
                 return true;
             }
 
+            // Manejar el caso en que la autenticación falle
             return false;
         }
 
-        private async Task EnsureTokenIsValid()
-        {
-            if (_token == null || DateTime.UtcNow >= _tokenExpirationTime)
-            {
-                await AuthenticateAsync();
-            }
-        }
+        //private async Task EnsureTokenIsValid()
+        //{
+        //    if (_token == null || DateTime.UtcNow >= _tokenExpirationTime)
+        //    {
+        //        await AuthenticateAsync();
+        //    }
+        //}
+
 
         private RestRequest AddAuthentication(RestRequest request)
         {
-            EnsureTokenIsValid().GetAwaiter().GetResult();
 
             if (_token != null)
             {
@@ -64,12 +62,32 @@ namespace CGASTOSFE.RestApis
 
             return request;
         }
+        public async Task<ApiRequestResultDto<string>> VerificarUsuarioAsync(VerificarUsuarioDTO verificarUsuarioDto)
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest("/Acceso/VerificarUsuario", Method.Post);
+            request.AddJsonBody(verificarUsuarioDto);
+
+            var response = await client.ExecuteAsync<ApiRequestResultDto<string>>(request);
+            return response.Data;
+        }
+
+        public async Task<bool> CambiarContrasenaAsync(CambiarContrasenaDTO cambiarContrasenaDto)
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest("/Acceso/CambiarContrasena", Method.Put);
+            request = AddAuthentication(request); // Añadir autenticación si es necesario
+            request.AddJsonBody(cambiarContrasenaDto);
+
+            var response = await client.ExecuteAsync<ApiRequestResultDto<string>>(request);
+            return response.IsSuccessful && response.Data.Success;
+        }
 
         //******************************************************PRODUCTODTO******************************************************//
         public async Task<List<ProductoDto>> GetProductosAsync()
         {
             var client = new RestClient(_apiBaseUrl);
-            var request = new RestRequest("Producto", Method.Get);
+            var request = new RestRequest("/Producto/Lista", Method.Get);
             AddAuthentication(request);
 
             var response = await client.ExecuteAsync<List<ProductoDto>>(request);
@@ -136,7 +154,7 @@ namespace CGASTOSFE.RestApis
         public async Task<List<ProveedorDto>> GetProveedoresAsync()
         {
             var client = new RestClient(_apiBaseUrl);
-            var request = new RestRequest("Proveedor", Method.Get);
+            var request = new RestRequest("/Proveedores", Method.Get);
             AddAuthentication(request);
 
             var response = await client.ExecuteAsync<List<ProveedorDto>>(request);
@@ -151,7 +169,7 @@ namespace CGASTOSFE.RestApis
         public async Task<ProveedorDto> GetProveedoresAsync(int id)
         {
             var client = new RestClient(_apiBaseUrl);
-            var request = new RestRequest($"Proveedor/{id}", Method.Get);
+            var request = new RestRequest($"Proveedores/{id}", Method.Get);
             AddAuthentication(request);
 
             var response = await client.ExecuteAsync<ProveedorDto>(request);
@@ -166,7 +184,7 @@ namespace CGASTOSFE.RestApis
         public async Task<bool> PutProveedoresAsync(ProveedorDto proveedorDto)
         {
             var client = new RestClient(_apiBaseUrl);
-            var request = new RestRequest("Proveedor", Method.Put);
+            var request = new RestRequest("Proveedores", Method.Put);
             request.AddJsonBody(proveedorDto);
             AddAuthentication(request);
 
@@ -178,7 +196,7 @@ namespace CGASTOSFE.RestApis
         public async Task<bool> PostProveedoresAsync(ProveedorDto proveedorDto)
         {
             var client = new RestClient(_apiBaseUrl);
-            var request = new RestRequest("Proveedor", Method.Post);
+            var request = new RestRequest("Proveedores", Method.Post);
             request.AddJsonBody(proveedorDto);
             AddAuthentication(request);
 
@@ -190,7 +208,7 @@ namespace CGASTOSFE.RestApis
         public async Task<bool> DeleteProveedoresAsync(int id)
         {
             var client = new RestClient(_apiBaseUrl);
-            var request = new RestRequest($"Proveedor/{id}", Method.Delete);
+            var request = new RestRequest($"Proveedores/{id}", Method.Delete);
             AddAuthentication(request);
 
             var response = await client.ExecuteAsync(request);
@@ -203,7 +221,7 @@ namespace CGASTOSFE.RestApis
         public async Task<List<InventarioDto>> GetInventariosAsync()
         {
             var client = new RestClient(_apiBaseUrl);
-            var request = new RestRequest("Inventario", Method.Get);
+            var request = new RestRequest("Inventario/Lista", Method.Get);
             AddAuthentication(request);
 
             var response = await client.ExecuteAsync<List<InventarioDto>>(request);
@@ -240,7 +258,7 @@ namespace CGASTOSFE.RestApis
             var response = await client.ExecuteAsync(request);
 
             return response.IsSuccessful;
-        }   
+        }
 
         public async Task<bool> PostInventariosAsync(InventarioDto inventarioDto)
         {
@@ -265,7 +283,73 @@ namespace CGASTOSFE.RestApis
             return response.IsSuccessful;
         }
 
-        //************************************************************************************************************//
+        //***********************************************USUARIODTO*******************************************************//
+
+
+        public async Task<List<UsuarioDTO>> GetUsuariosAsync()
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest("Usuario", Method.Get);
+            AddAuthentication(request);
+
+            var response = await client.ExecuteAsync<List<UsuarioDTO>>(request);
+
+            if (response.IsSuccessful && response.Data != null)
+            {
+                return response.Data;
+            }
+            throw new Exception(response.ErrorMessage);
+        }
+
+        public async Task<UsuarioDTO> GetUsuariosAsync(int id)
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest($"Usuario/{id}", Method.Get);
+            AddAuthentication(request);
+
+            var response = await client.ExecuteAsync<UsuarioDTO>(request);
+
+            if (response.IsSuccessful && response.Data != null)
+            {
+                return response.Data;
+            }
+            throw new Exception(response.ErrorMessage);
+        }
+
+        public async Task<bool> PutUsuariosAsync(UsuarioDTO usuarioDTO)
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest("Usuario", Method.Put);
+            request.AddJsonBody(usuarioDTO);
+            AddAuthentication(request);
+
+            var response = await client.ExecuteAsync(request);
+
+            return response.IsSuccessful;
+        }
+
+        public async Task<bool> PostUsuariosAsync(UsuarioDTO usuarioDTO)
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest("Usuario", Method.Post);
+            request.AddJsonBody(usuarioDTO);
+            AddAuthentication(request);
+
+            var response = await client.ExecuteAsync(request);
+
+            return response.IsSuccessful;
+        }
+
+        public async Task<bool> DeleteUsuariosAsync(int id)
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest($"Usuario/{id}", Method.Delete);
+            AddAuthentication(request);
+
+            var response = await client.ExecuteAsync(request);
+
+            return response.IsSuccessful;
+        }
     }
 
 }

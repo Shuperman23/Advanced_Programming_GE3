@@ -75,7 +75,7 @@ namespace ExamenCGastos.Controllers
 
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login(LoginDTO objeto)
+        public async Task<IActionResult> Login(LoginDto objeto)
         {
             try
             {
@@ -83,26 +83,90 @@ namespace ExamenCGastos.Controllers
                     .Where(u => u.Correo == objeto.Correo)
                     .FirstOrDefaultAsync();
 
-                if (usuarioEncontrado == null)
+                if (usuarioEncontrado == null || !_utilidades.VerificarContrasena(objeto.Clave, usuarioEncontrado.Clave))
                 {
-                    return StatusCode(StatusCodes.Status200OK, new { isSuccess = false, message = "No se encontró ese usuario." });
+                    return Ok(new ApiRequestResultDto<string>
+                    {
+                        Success = false,
+                        Message = "Usuario o contraseña incorrectos."
+                    });
                 }
 
-
-                if (usuarioEncontrado == null || usuarioEncontrado.Clave == null || !_utilidades.VerificarContrasena(objeto.Clave, usuarioEncontrado.Clave)) // Usar bcrypt para verificar la contraseña
+                var token = _utilidades.generarJWT(usuarioEncontrado);
+                return Ok(new ApiRequestResultDto<string>
                 {
-                    return StatusCode(StatusCodes.Status200OK, new { isSuccess = false, message = "Contraseña Incorrecta." });
-                }
-                else
-                {
-                    return StatusCode(StatusCodes.Status200OK, new { isSuccess = true, token = _utilidades.generarJWT(usuarioEncontrado) });
-                }
+                    Success = true,
+                    Result = token
+                });
             }
             catch (Exception ex)
             {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ApiRequestResultDto<string>
+                {
+                    Success = false,
+                    Message = "Ocurrió un error interno."
+                });
+            }
+        }
 
+        [HttpPost]
+        [Route("VerificarUsuario")]
+        public async Task<IActionResult> VerificarUsuario(VerificarUsuarioDTO objeto)
+        {
+            try
+            {
+                var usuarioEncontrado = await _controlGastosContext.Usuarios.FirstOrDefaultAsync(u => u.Correo == objeto.Correo);
+
+                if (usuarioEncontrado == null)
+                {
+                    return BadRequest("No se encontró ese usuario.");
+                }
+
+                return StatusCode(StatusCodes.Status200OK, new { isSuccess = true, message = "Usuario encontrado." });
+            }
+            catch (Exception ex)
+            {
                 throw;
             }
         }
+
+
+        [HttpPut]
+        [Route("CambiarContrasena")]
+        public async Task<IActionResult> CambiarContrasena(CambiarContrasenaDTO objeto)
+        {
+            try
+            {
+                var usuarioEncontrado = await _controlGastosContext.Usuarios.FirstOrDefaultAsync(u => u.Correo == objeto.Correo);
+
+                if (usuarioEncontrado == null)
+                {
+                    return BadRequest("No se encontró ese usuario.");
+                }
+
+                usuarioEncontrado.Clave = _utilidades.EncriptarContrasena(objeto.NuevaClave); // Usar bcrypt para encriptar la nueva contraseña
+
+                _controlGastosContext.Usuarios.Update(usuarioEncontrado);
+                await _controlGastosContext.SaveChangesAsync();
+
+                string emailBody = $@"
+         <html>
+          <body>
+           <h1> Hola, {usuarioEncontrado.Nombre} </h1>
+          <p> Tu contraseña ha sido actualizada. </p>
+        </body>
+       </html>";
+
+                await _configuracionesEmail.SendEmailAsync(usuarioEncontrado.Correo, "Contraseña Actualizada", emailBody);
+
+                return StatusCode(StatusCodes.Status200OK, new { isSuccess = true });
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
     }
 }
+    

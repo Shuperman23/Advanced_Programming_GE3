@@ -1,0 +1,45 @@
+﻿@model IEnumerable<CGASTOSFE.DTOs.ProveedorDto>
+@{
+    ViewData["Title"] = "Proveedores";
+}
+
+<h1>Proveedores</h1>
+
+<p>
+
+    <a class="btn btn-primary" asp-action="Create">Ingresar proveedor</a>
+</p>
+
+<table class="table">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Direccion</th>
+            <th>Telefono</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var proveedor in Model)
+        {
+        <tr>
+            <td>@proveedor.Id</td>
+            <td>@proveedor.Nombre</td>
+            <td>@proveedor.Direccion</td>
+            <td>@proveedor.TelefonoContacto</td>
+            <td>@proveedor.EmailContacto</td>
+            <td>
+                <a class="btn btn-info btn-sm" asp-action="Details"  asp-route-id="@proveedor.Id">Detalles</a>
+                <a class="btn btn-warning btn-sm" asp-action="Edit"  asp-route-id="@proveedor.Id">Editar</a>
+                <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@proveedor.Id">Eliminar</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

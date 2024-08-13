@@ -1,0 +1,68 @@
+﻿@model CGASTOSFE.DTOs.ProveedorDto
+@{
+    ViewData["Title"] = "Ingresar Proveedor";
+}
+
+<h1>Ingresar Proveedor</h1>
+
+<form asp-action="Create">
+    
+    <div class="form-group">
+        <
+        <label asp-for="Id" class="control-label"></label>
+        
+        <input asp-for="Id" class="form-control" />
+        
+        <span asp-validation-for="Id" class="text-warning"></span>
+    </div>
+
+    
+    <div class="form-group">
+        
+        <label asp-for="Nombre" class="control-label"></label>
+        
+        <input asp-for="Nombre" class="form-control" />
+        
+        <span asp-validation-for="Nombre" class="text-danger"></span>
+     </div>
+
+    <div class="form-group">
+
+        <label asp-for="Direccion" class="control-label"></label>
+
+        <input asp-for="Direccion" class="form-control" />
+
+        <span asp-validation-for="Direccion" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+
+        <label asp-for="TelefonoContacto" class="control-label"></label>
+
+        <input asp-for="TelefonoContacto" class="form-control" />
+
+        <span asp-validation-for="TelefonoContacto" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+
+        <label asp-for="EmailContacto" class="control-label"></label>
+
+        <input asp-for="EmailContacto" class="form-control" />
+
+        <span asp-validation-for="EmailContacto" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Crear" class="btn btn-primary" />
+    </div>
+</form>
+
+<a class="btn btn-secondary" asp-action="Index">Volver</a>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

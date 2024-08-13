@@ -1,0 +1,56 @@
+﻿@model CGASTOSFE.DTOs.LoginDto
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/style.css" />
+</head>
+<body>
+    <div class="login-container">
+        <img src="/Imagenes/logo.png" alt="Logo de Gestión de Gastos" />
+        <div class="welcome-text">Bienvenido al Gestor de Gastos</div>
+        <div class="login-box">
+            <h2>Iniciar Sesión</h2>
+            <form asp-action="Login" method="post">
+                <div class="textbox">
+                    <input asp-for="Correo" type="email" placeholder="Correo" required />
+                    <span asp-validation-for="Correo" class="text-danger"></span>
+                </div>
+                <div class="textbox">
+                    <input asp-for="Clave" type="password" placeholder="Clave" required />
+                    <span asp-validation-for="Clave" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn">Ingresar</button>
+            </form>
+        </div>
+        <div>
+            <a asp-action="VerificarUsuario">¿Olvidaste tu contraseña?</a>
+        </div>
+    </div>
+    @* Mostrar mensajes de error generales *@
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <ul>
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    }
+</body>
+</html>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

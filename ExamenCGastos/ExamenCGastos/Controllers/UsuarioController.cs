@@ -51,6 +51,9 @@ namespace ExamenCGastos.Controllers
         [HttpPut]
         public async Task<IActionResult> PutUsuario(UsuarioDTO usuarioDto)
         {
+            // Encriptar la nueva contraseña antes de actualizarla
+            usuarioDto.Clave = BCrypt.Net.BCrypt.HashPassword(usuarioDto.Clave);
+
             var response = await _unitOfWork.Usuario.UpdateUsuarioAsync(usuarioDto);
 
             if (response != null && response.SpResponse == 1)
@@ -61,10 +64,14 @@ namespace ExamenCGastos.Controllers
                 return NotFound(Mensajes.E);
         }
 
+
         // POST: api/Acceso
         [HttpPost]
         public async Task<ActionResult<UsuarioDTO>> PostUsuario(UsuarioDTO usuarioDto)
         {
+            // Encriptar la contraseña antes de guardarla
+            usuarioDto.Clave = BCrypt.Net.BCrypt.HashPassword(usuarioDto.Clave);
+
             var response = await _unitOfWork.Usuario.CreateNewUsuarioAsync(usuarioDto);
 
             if (response != null && response.SpResponse == 1)

@@ -1,0 +1,44 @@
+﻿@model IEnumerable<CGASTOSFE.DTOs.UsuarioDTO>
+@{
+    ViewData["Title"] = "Usuarios";
+}
+
+<h1>Usuarios</h1>
+
+<p>
+
+    <a class="btn btn-primary" asp-action="Create">Ingresar Usuario</a>
+</p>
+
+<table class="table">
+    <thead class="table-dark">
+        <tr>
+            <th>IdUsuario</th>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Pass</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var usuario in Model)
+        {
+            <tr>
+
+                <td>@usuario.IdUsuario</td>
+                <td>@usuario.Nombre</td>
+                <td>@usuario.Correo</td>
+                <td>@usuario.Clave</td>
+                <td>
+                    <a class="btn btn-info btn-sm" asp-action="Details"  asp-route-id="@usuario.IdUsuario">Detalles</a>
+                    <a class="btn btn-warning btn-sm" asp-action="Edit"  asp-route-id="@usuario.IdUsuario">Editar</a>
+                    <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@usuario.IdUsuario">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

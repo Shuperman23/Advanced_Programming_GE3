@@ -15,23 +15,28 @@
         <tr>
             <th>ID</th>
             <th>Nombre</th>
-            <th>ProveedroId</th>
+            <th>ProveedorId</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var autor in Model)
+        @foreach (var producto in Model)
         {
             <tr>
 
-                <td>@autor.Id</td>
-                <td>@autor.Nombre</td>
-                <td>@autor.ProveedorId</td>
+                <td>@producto.Id</td>
+                <td>@producto.Nombre</td>
+                <td>@producto.ProveedorId</td>
                 <td>
-                    <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@autor.Id">Detalles</a>
-                    <a class="btn btn-warning btn-sm" asp-action="Edit" asp-route-id="@autor.Id">Editar</a>
-                    <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@autor.Id">Eliminar</a>
+                    <a class="btn btn-info btn-sm" asp-action="Details"  asp-route-id="@producto.Id">Detalles</a>
+                    <a class="btn btn-warning btn-sm" asp-action="Edit"  asp-route-id="@producto.Id">Editar</a>
+                    <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@producto.Id">Eliminar</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

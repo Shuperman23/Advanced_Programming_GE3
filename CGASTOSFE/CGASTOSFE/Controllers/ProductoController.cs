@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using CGASTOSFE.DTOs;
+﻿using CGASTOSFE.DTOs;
 using CGASTOSFE.RestApis;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CGASTOSFE.Controllers
 {
+    [Authorize(Policy = "CustomPolicy")]
     public class ProductoController : Controller
     {
         private readonly ControlGastosAPI _controlGastosAPI;
@@ -15,8 +18,23 @@ namespace CGASTOSFE.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var productos = await _controlGastosAPI.GetProductosAsync();
-            return View(productos);
+            try
+            {
+                var productos = await _controlGastosAPI.GetProductosAsync();
+                return View(productos);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                // Manejar caso específico de autorización
+                TempData["ErrorMessage"] = ex.Message; // Guardar mensaje de error en TempData
+                return RedirectToAction("Index", "Home"); // Redirigir a la vista de inicio
+            }
+            catch (Exception ex)
+            {
+                // Manejar excepciones generales
+                TempData["ErrorMessage"] = "Ocurrió un error al obtener los productos. Intenta nuevamente más tarde."; // Guardar mensaje de error en TempData
+                return RedirectToAction("Index", "Home"); // Redirigir a la vista de inicio
+            }
         }
 
         public async Task<IActionResult> Details(int id)
@@ -31,9 +49,20 @@ namespace CGASTOSFE.Controllers
             return View(producto);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            try
+            {
+                var proveedores = await _controlGastosAPI.GetProveedoresAsync();
+                ViewBag.Proveedores = new SelectList(proveedores, "Id", "Nombre");
+                return View();
+            }
+            catch (Exception ex)
+            {
+                // Maneja el error (por ejemplo, registrándolo y mostrando un mensaje al usuario)
+                ModelState.AddModelError("", "Error al obtener la lista de proveedores.");
+                return View();
+            }
         }
 
         [HttpPost]
@@ -59,7 +88,7 @@ namespace CGASTOSFE.Controllers
         {
             var producto = await _controlGastosAPI.GetProductosAsync(id);
 
-            if(producto == null)
+            if (producto == null)
             {
                 return NotFound();
             }
@@ -73,7 +102,7 @@ namespace CGASTOSFE.Controllers
 
         public async Task<IActionResult> Edit(int id, ProductoDto productoDto)
         {
-            if (id != productoDto.Id) 
+            if (id != productoDto.Id)
             {
                 return NotFound();
             }
@@ -111,7 +140,7 @@ namespace CGASTOSFE.Controllers
         {
             var success = await _controlGastosAPI.DeleteProductosAsync(id);
 
-            if(success)
+            if (success)
             {
                 return RedirectToAction(nameof(Index));
             }

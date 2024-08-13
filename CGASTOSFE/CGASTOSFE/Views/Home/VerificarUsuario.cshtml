@@ -1,0 +1,50 @@
+﻿@model CGASTOSFE.DTOs.VerificarUsuarioDTO
+
+@{
+    ViewData["Title"] = "Verificar Usuario";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/style.css" />
+</head>
+<body>
+    <div class="login-container">
+        <img src="/Imagenes/logo.png" alt="Logo de Gestión de Gastos" />
+        <div class="welcome-text">Verificar Usuario</div>
+        <div class="login-box">
+            <h2>Verificar Usuario</h2>
+            <form asp-action="VerificarUsuario" method="post">
+                <div class="textbox">
+                    <input asp-for="Correo" type="email" placeholder="Correo" required />
+                    <span asp-validation-for="Correo" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn">Enviar Enlace de Recuperación</button>
+            </form>
+            <a asp-action="login">Volver</a>
+        </div>
+    </div>
+    @* Mostrar mensajes de error generales *@
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <ul>
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    }
+</body>
+</html>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
