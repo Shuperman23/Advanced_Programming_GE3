@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CGASTOSFE.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "CustomPolicy")]
     public class ProductoController : Controller
     {
         private readonly ControlGastosAPI _controlGastosAPI;
