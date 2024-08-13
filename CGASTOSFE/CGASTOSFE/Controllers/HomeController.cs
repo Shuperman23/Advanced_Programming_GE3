@@ -56,6 +56,64 @@ namespace CGASTOSFE.Controllers
 
             return View(loginDto);
         }
+        public IActionResult VerificarUsuario()
+        {
+            return View(new VerificarUsuarioDTO());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> VerificarUsuario(VerificarUsuarioDTO verificarUsuarioDto)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _controlGastosAPI.VerificarUsuarioAsync(verificarUsuarioDto);
+
+                if (response.Success)
+                {
+                    return RedirectToAction(nameof(CambiarContrasena), new { correo = verificarUsuarioDto.Correo });
+                }
+                else
+                {
+                    ModelState.AddModelError("", response.Message ?? "No se pudo verificar el usuario.");
+                }
+            }
+
+            return View(verificarUsuarioDto);
+        }
+
+        public IActionResult CambiarContrasena(string correo)
+        {
+            var model = new CambiarContrasenaDTO { Correo = correo };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CambiarContrasena(CambiarContrasenaDTO cambiarContrasenaDto)
+        {
+            if (ModelState.IsValid)
+            {
+                var success = await _controlGastosAPI.CambiarContrasenaAsync(cambiarContrasenaDto);
+
+                if (success)
+                {
+                    return RedirectToAction(nameof(Login));
+                }
+                else
+                {
+                    ModelState.AddModelError("", "No se pudo cambiar la contraseña.");
+                }
+            }
+
+            return View(cambiarContrasenaDto);
+        }
+
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
 
         public IActionResult Logout()
         {
@@ -63,10 +121,6 @@ namespace CGASTOSFE.Controllers
             return RedirectToAction(nameof(Login));
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

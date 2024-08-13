@@ -67,6 +67,26 @@ namespace CGASTOSFE.RestApis
 
             return request;
         }
+        public async Task<ApiRequestResultDto<string>> VerificarUsuarioAsync(VerificarUsuarioDTO verificarUsuarioDto)
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest("/Acceso/VerificarUsuario", Method.Post);
+            request.AddJsonBody(verificarUsuarioDto);
+
+            var response = await client.ExecuteAsync<ApiRequestResultDto<string>>(request);
+            return response.Data;
+        }
+
+        public async Task<bool> CambiarContrasenaAsync(CambiarContrasenaDTO cambiarContrasenaDto)
+        {
+            var client = new RestClient(_apiBaseUrl);
+            var request = new RestRequest("/Acceso/CambiarContrasena", Method.Put);
+            request = AddAuthentication(request); // Añadir autenticación si es necesario
+            request.AddJsonBody(cambiarContrasenaDto);
+
+            var response = await client.ExecuteAsync<ApiRequestResultDto<string>>(request);
+            return response.IsSuccessful && response.Data.Success;
+        }
 
         //******************************************************PRODUCTODTO******************************************************//
         public async Task<List<ProductoDto>> GetProductosAsync()
