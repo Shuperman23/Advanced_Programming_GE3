@@ -1,6 +1,7 @@
 using CGASTOSFE.DTOs;
 using CGASTOSFE.RestApis;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,16 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.LoginPath = "/Home/Login";
     });
+
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CustomPolicy", policy =>
+        policy.Requirements.Add(new CustomRequirement()));
+});
+
+builder.Services.AddSingleton<IAuthorizationHandler, CustomAuthorizationHandler>();
 
 var app = builder.Build();
 

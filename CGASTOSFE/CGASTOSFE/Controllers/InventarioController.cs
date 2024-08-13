@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CGASTOSFE.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "CustomPolicy")]
     public class InventarioController : Controller
     {
         private readonly ControlGastosAPI _controlGastosAPI;
@@ -55,7 +55,6 @@ namespace CGASTOSFE.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
 
         public async Task<IActionResult> Create(InventarioDto inventarioDto)
         {
@@ -88,7 +87,6 @@ namespace CGASTOSFE.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
 
         public async Task<IActionResult> Edit(int id, InventarioDto inventarioDto)
         {

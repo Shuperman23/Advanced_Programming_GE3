@@ -1,12 +1,14 @@
 using CGASTOSFE.DTOs;
 using CGASTOSFE.Models;
 using CGASTOSFE.RestApis;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
 
 namespace CGASTOSFE.Controllers
 {
+
     public class HomeController : Controller
     {
         private readonly IOptions<ControlGastosApiSettingsDto> _options;
@@ -19,7 +21,7 @@ namespace CGASTOSFE.Controllers
             _options = options;
             _controlGastosAPI = controlGastosAPI;
         }
-
+        [Authorize(Policy = "CustomPolicy")]
         public IActionResult Index()
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserToken")))

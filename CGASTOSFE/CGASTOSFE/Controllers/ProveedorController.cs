@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CGASTOSFE.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "CustomPolicy")]
     public class ProveedorController : Controller
     {
         private readonly ControlGastosAPI _controlGastosAPI;
