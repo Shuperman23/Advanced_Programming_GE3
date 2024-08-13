@@ -69,6 +69,12 @@ namespace CGASTOSFE.Controllers
             {
                 var response = await _controlGastosAPI.VerificarUsuarioAsync(verificarUsuarioDto);
 
+                if (response == null)
+                {
+                    ModelState.AddModelError("", "usuario no encontrado.");
+                    return View(verificarUsuarioDto);
+                }
+
                 if (response.Success)
                 {
                     return RedirectToAction(nameof(CambiarContrasena), new { correo = verificarUsuarioDto.Correo });
@@ -81,6 +87,7 @@ namespace CGASTOSFE.Controllers
 
             return View(verificarUsuarioDto);
         }
+
 
         public IActionResult CambiarContrasena(string correo)
         {
