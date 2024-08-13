@@ -54,7 +54,6 @@ namespace CGASTOSFE.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
 
         public async Task<IActionResult> Create(UsuarioDTO usuarioDTO)
         {
@@ -94,7 +93,6 @@ namespace CGASTOSFE.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
 
         public async Task<IActionResult> Edit(int id, UsuarioDTO usuarioDTO)
         {
