@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using CGASTOSFE.DTOs;
+﻿using CGASTOSFE.DTOs;
 using CGASTOSFE.RestApis;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CGASTOSFE.Controllers
 {
+    [Authorize]
     public class InventarioController : Controller
     {
         private readonly ControlGastosAPI _controlGastosAPI;
@@ -12,12 +14,27 @@ namespace CGASTOSFE.Controllers
         {
             _controlGastosAPI = controlGastosAPI;
         }
-
         public async Task<IActionResult> Index()
         {
-            var inventarios = await _controlGastosAPI.GetInventariosAsync();
-            return View(inventarios);
+            try
+            {
+                var inventarios = await _controlGastosAPI.GetInventariosAsync();
+                return View(inventarios);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                // Manejar caso específico de autorización
+                TempData["ErrorMessage"] = ex.Message; // Guardar mensaje de error en TempData
+                return RedirectToAction("Index", "Home"); // Redirigir a la vista de inicio
+            }
+            catch (Exception ex)
+            {
+                // Manejar excepciones generales
+                TempData["ErrorMessage"] = "Ocurrió un error al obtener los productos. Intenta nuevamente más tarde."; // Guardar mensaje de error en TempData
+                return RedirectToAction("Index", "Home"); // Redirigir a la vista de inicio
+            }
         }
+
 
         public async Task<IActionResult> Details(int id)
         {
@@ -38,6 +55,7 @@ namespace CGASTOSFE.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
 
         public async Task<IActionResult> Create(InventarioDto inventarioDto)
         {
@@ -70,6 +88,7 @@ namespace CGASTOSFE.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
 
         public async Task<IActionResult> Edit(int id, InventarioDto inventarioDto)
         {

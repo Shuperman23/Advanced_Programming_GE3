@@ -1,10 +1,10 @@
 using CGASTOSFE.DTOs;
 using CGASTOSFE.RestApis;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
-
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -17,8 +17,13 @@ builder.Services.AddSession(options =>
 builder.Services.Configure<ControlGastosApiSettingsDto>(builder.Configuration.GetSection("ControlGastosAPI"));
 builder.Services.AddSingleton<ControlGastosAPI>();
 
-var app = builder.Build();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Home/Login";
+    });
 
+var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
@@ -33,6 +38,8 @@ app.UseRouting();
 
 app.UseSession();
 
+// Habilitar autenticación y autorización
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using CGASTOSFE.DTOs;
+﻿using CGASTOSFE.DTOs;
 using Microsoft.Extensions.Options;
 using RestSharp;
 
@@ -55,7 +50,7 @@ namespace CGASTOSFE.RestApis
         //        await AuthenticateAsync();
         //    }
         //}
-        
+
 
         private RestRequest AddAuthentication(RestRequest request)
         {
@@ -263,7 +258,7 @@ namespace CGASTOSFE.RestApis
             var response = await client.ExecuteAsync(request);
 
             return response.IsSuccessful;
-        }   
+        }
 
         public async Task<bool> PostInventariosAsync(InventarioDto inventarioDto)
         {
