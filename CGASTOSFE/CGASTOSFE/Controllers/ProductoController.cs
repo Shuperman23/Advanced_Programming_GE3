@@ -81,19 +81,31 @@ namespace CGASTOSFE.Controllers
                 ModelState.AddModelError("", "No se pudo crear el producto.");
             }
 
+            var productos = await _controlGastosAPI.GetProductosAsync();
+            ViewBag.Productos = new SelectList(productos, "Id", "Nombre");
             return View(productoDto);
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var producto = await _controlGastosAPI.GetProductosAsync(id);
-
-            if (producto == null)
+            try
             {
-                return NotFound();
-            }
+                var producto = await _controlGastosAPI.GetProductosAsync(id);
+                if (producto == null)
+                {
+                    return NotFound();
+                }
 
-            return View(producto);
+                var proveedores = await _controlGastosAPI.GetProveedoresAsync();
+                ViewBag.Proveedores = new SelectList(proveedores, "Id", "Nombre", producto.ProveedorId);
+
+                return View(producto);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Error al obtener la lista de proveedores.");
+                return View();
+            }
         }
 
 
@@ -118,6 +130,8 @@ namespace CGASTOSFE.Controllers
                 ModelState.AddModelError("", "No se pudo actualizar el producto.");
             }
 
+            var productos = await _controlGastosAPI.GetProductosAsync();
+            ViewBag.Productos = new SelectList(productos, "Id", "Nombre");
             return View(productoDto);
         }
 

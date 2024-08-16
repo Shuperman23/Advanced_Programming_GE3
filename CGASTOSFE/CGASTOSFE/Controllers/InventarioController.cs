@@ -67,7 +67,6 @@ namespace CGASTOSFE.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-
         public async Task<IActionResult> Create(InventarioDto inventarioDto)
         {
             if (ModelState.IsValid)
@@ -81,8 +80,12 @@ namespace CGASTOSFE.Controllers
                 ModelState.AddModelError("", "No se pudo ingresar el producto en el inventario.");
             }
 
+            var productos = await _controlGastosAPI.GetProductosAsync();
+            ViewBag.Productos = new SelectList(productos, "Id", "Nombre");
+
             return View(inventarioDto);
-        }   
+        }
+
 
         public async Task<IActionResult> Edit(int id)
         {

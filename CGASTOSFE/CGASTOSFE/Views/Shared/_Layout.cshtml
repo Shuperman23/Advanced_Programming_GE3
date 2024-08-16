@@ -75,9 +75,12 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle collapse__menu" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <ion-icon name="settings-outline"></ion-icon>
-                            <span @* class="dropdown-text dropdown-item" *@> @Context.Session.GetString("UserName") </span>
+                            <span @* class="dropdown-text dropdown-item" *@></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-start nav__icon collapse__menu" aria-labelledby="userMenuButton">
+                            <li>
+                                <span class="user-name-small">@Context.Session.GetString("UserName")</span>
+                                </li>
                             <li>
                                 <a class="dropdown-item collapse__menu" asp-area="" asp-controller="Home" asp-action="Index">
                                     <ion-icon name="home-outline" class="nav__icon"></ion-icon>
@@ -127,3 +130,22 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const userMenu = document.getElementById('userMenu');
+        const navbar = document.getElementById('navbar');
+        const collapseLinks = document.querySelectorAll('.nav__link.collapsefe, .nav__link.collapsefe.active');
+
+        function expandNavbar() {
+            if (!navbar.classList.contains('expander')) {
+                navbar.classList.add('expander');
+            }
+        }
+
+        userMenu.addEventListener('click', expandNavbar);
+
+        collapseLinks.forEach(function (link) {
+            link.addEventListener('click', expandNavbar);
+        });
+    });
+</script>

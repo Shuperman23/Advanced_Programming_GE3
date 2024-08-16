@@ -162,3 +162,15 @@ a {
     transform: rotate(180deg);
 }
 
+.user-name-small {
+    font-size: 0.7em;
+    vertical-align: middle;
+    display: inline-block;
+    line-height: 1.5em;
+    margin-left: 5px;
+}
+
+.nav-link.dropdown-toggle {
+    display: flex;
+    align-items: center;
+}
