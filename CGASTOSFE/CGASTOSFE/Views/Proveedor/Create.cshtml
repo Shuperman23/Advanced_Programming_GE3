@@ -8,7 +8,6 @@
 <form asp-action="Create">
     
     <div class="form-group">
-        <
         <label asp-for="Id" class="control-label"></label>
         
         <input asp-for="Id" class="form-control" />
@@ -53,13 +52,11 @@
         <span asp-validation-for="EmailContacto" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
+    <div class="form-group" style="padding-top: 20px;">
         <input type="submit" value="Crear" class="btn btn-primary" />
+        <a class="btn btn-secondary ml-6" style="margin-left: 20px;" asp-action="Index">Volver</a>
     </div>
 </form>
-
-<a class="btn btn-secondary" asp-action="Index">Volver</a>
-
 
 @section Scripts {
     @{

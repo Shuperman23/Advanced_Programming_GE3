@@ -2,6 +2,7 @@
 using CGASTOSFE.RestApis;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CGASTOSFE.Controllers
 {
@@ -48,9 +49,20 @@ namespace CGASTOSFE.Controllers
             return View(inventario);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            try
+            {
+                var productos = await _controlGastosAPI.GetProductosAsync();
+                ViewBag.Productos = new SelectList(productos, "Id", "Nombre");
+                return View();
+            }
+            catch (Exception ex)
+            {
+                // Maneja el error (por ejemplo, registrándolo y mostrando un mensaje al usuario)
+                ModelState.AddModelError("", "Error al obtener la lista de productos.");
+                return View();
+            }
         }
 
         [HttpPost]

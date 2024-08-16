@@ -22,7 +22,7 @@
             
         <label asp-for="ProductoId" class="control-label"></label>
         
-        <input asp-for="ProductoId" class="form-control" />
+        <select asp-for="ProductoId" class="form-control" asp-items="ViewBag.Productos"></select>
         
         <span asp-validation-for="ProductoId" class="text-danger"></span>
      </div>
@@ -81,18 +81,12 @@
 
     </div>
 
-
-    <div class="form-group">
+    <div class="form-group" style="padding-top: 20px;">
         <input type="submit" value="Crear" class="btn btn-primary" />
+        <a class="btn btn-secondary ml-6" style="margin-left: 20px;" asp-action="Index">Volver</a>
     </div>
 
 </form>
-
-
-<a class="btn btn-secondary" asp-action="Index">Volver</a>
-
-
-
 
 @section Scripts {
     @{
