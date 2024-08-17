@@ -11,10 +11,13 @@ namespace CGASTOSFE.Controllers
     {
         private readonly ControlGastosAPI _controlGastosAPI;
 
+        // Constructor
         public InventarioController(ControlGastosAPI controlGastosAPI)
         {
             _controlGastosAPI = controlGastosAPI;
         }
+
+        // GET: Inventario
         public async Task<IActionResult> Index()
         {
             try
@@ -36,7 +39,7 @@ namespace CGASTOSFE.Controllers
             }
         }
 
-
+        // GET: Inventario/Details/ById
         public async Task<IActionResult> Details(int id)
         {
             var inventario = await _controlGastosAPI.GetInventariosAsync(id);
@@ -49,6 +52,7 @@ namespace CGASTOSFE.Controllers
             return View(inventario);
         }
 
+        // GET: Inventario/Create
         public async Task<IActionResult> Create()
         {
             try
@@ -65,13 +69,14 @@ namespace CGASTOSFE.Controllers
             }
         }
 
+        // POST: Inventario/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(InventarioDto inventarioDto)
         {
             if (ModelState.IsValid)
             {
-                var success = await _controlGastosAPI.PostInventariosAsync(inventarioDto);
+                var success = await _controlGastosAPI.PostInventariosAsync(inventarioDto);//variable asincronica
 
                 if (success)
                 {
@@ -139,6 +144,7 @@ namespace CGASTOSFE.Controllers
         [HttpPost, ActionName("DeleteConfirmed")]
         [ValidateAntiForgeryToken]
 
+        // POST: Inventario/Delete/ById
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var success = await _controlGastosAPI.DeleteInventariosAsync(id);
@@ -147,7 +153,7 @@ namespace CGASTOSFE.Controllers
             {
                 return RedirectToAction(nameof(Index));
             }
-            ModelState.AddModelError("", "No se pudo eliminar el producto del inventario.");//probar, si sirve aplicar este cambio al resto de controllers
+            ModelState.AddModelError("", "No se pudo eliminar el producto del inventario.");//mensaje de error
             return RedirectToAction(nameof(Delete), new { id });
         }
     }

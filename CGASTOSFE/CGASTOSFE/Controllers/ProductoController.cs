@@ -6,21 +6,24 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CGASTOSFE.Controllers
 {
+    // Requiere que el usuario esté autorizado bajo la política "CustomPolicy".
     [Authorize(Policy = "CustomPolicy")]
     public class ProductoController : Controller
     {
         private readonly ControlGastosAPI _controlGastosAPI;
 
+        // Constructor
         public ProductoController(ControlGastosAPI controlGastosAPI)
         {
             _controlGastosAPI = controlGastosAPI;
         }
 
+        //// Acción para mostrar la lista de productos.
         public async Task<IActionResult> Index()
         {
             try
             {
-                var productos = await _controlGastosAPI.GetProductosAsync();
+                var productos = await _controlGastosAPI.GetProductosAsync();// Obtener productos desde la API
                 return View(productos);
             }
             catch (UnauthorizedAccessException ex)
@@ -37,24 +40,26 @@ namespace CGASTOSFE.Controllers
             }
         }
 
+        // Acción para mostrar los detalles de un producto.
         public async Task<IActionResult> Details(int id)
         {
-            var producto = await _controlGastosAPI.GetProductosAsync(id);
+            var producto = await _controlGastosAPI.GetProductosAsync(id);// Obtener producto desde la API
 
             if (producto == null)
             {
-                return NotFound();
+                return NotFound();// Producto no encontrado
             }
 
             return View(producto);
         }
 
+        // Acción para crear un nuevo producto.
         public async Task<IActionResult> Create()
         {
             try
             {
-                var proveedores = await _controlGastosAPI.GetProveedoresAsync();
-                ViewBag.Proveedores = new SelectList(proveedores, "Id", "Nombre");
+                var proveedores = await _controlGastosAPI.GetProveedoresAsync();// Obtener proveedores desde la API
+                ViewBag.Proveedores = new SelectList(proveedores, "Id", "Nombre");// Crear lista de proveedores
                 return View();
             }
             catch (Exception ex)
@@ -65,6 +70,7 @@ namespace CGASTOSFE.Controllers
             }
         }
 
+        // Acción para crear un nuevo producto.
         [HttpPost]
         [ValidateAntiForgeryToken]
 
@@ -72,32 +78,33 @@ namespace CGASTOSFE.Controllers
         {
             if (ModelState.IsValid)
             {
-                var success = await _controlGastosAPI.PostProductosAsync(productoDto);
+                var success = await _controlGastosAPI.PostProductosAsync(productoDto);// Crear producto en la API
 
                 if (success)
                 {
                     return RedirectToAction(nameof(Index));
                 }
-                ModelState.AddModelError("", "No se pudo crear el producto.");
+                ModelState.AddModelError("", "No se pudo crear el producto.");// Error al crear el producto
             }
 
-            var productos = await _controlGastosAPI.GetProductosAsync();
-            ViewBag.Productos = new SelectList(productos, "Id", "Nombre");
-            return View(productoDto);
+            var productos = await _controlGastosAPI.GetProductosAsync();// Obtener productos desde la API
+            ViewBag.Productos = new SelectList(productos, "Id", "Nombre");// Crear lista de productos
+            return View(productoDto);// Retornar vista con el modelo
         }
 
+        // Acción para editar un producto.
         public async Task<IActionResult> Edit(int id)
         {
             try
             {
-                var producto = await _controlGastosAPI.GetProductosAsync(id);
+                var producto = await _controlGastosAPI.GetProductosAsync(id);// Obtener producto desde la API
                 if (producto == null)
                 {
                     return NotFound();
                 }
 
-                var proveedores = await _controlGastosAPI.GetProveedoresAsync();
-                ViewBag.Proveedores = new SelectList(proveedores, "Id", "Nombre", producto.ProveedorId);
+                var proveedores = await _controlGastosAPI.GetProveedoresAsync();// Obtener proveedores desde la API
+                ViewBag.Proveedores = new SelectList(proveedores, "Id", "Nombre", producto.ProveedorId);// Crear lista de proveedores
 
                 return View(producto);
             }
@@ -108,7 +115,7 @@ namespace CGASTOSFE.Controllers
             }
         }
 
-
+        // Acción para editar un producto.
         [HttpPost]
         [ValidateAntiForgeryToken]
 
@@ -121,23 +128,24 @@ namespace CGASTOSFE.Controllers
 
             if (ModelState.IsValid)
             {
-                var success = await _controlGastosAPI.PutProductosAsync(productoDto);
+                var success = await _controlGastosAPI.PutProductosAsync(productoDto);// Actualizar producto en la API
 
                 if (success)
                 {
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(Index));// Redirigir a la lista de productos
                 }
-                ModelState.AddModelError("", "No se pudo actualizar el producto.");
+                ModelState.AddModelError("", "No se pudo actualizar el producto.");// Error al actualizar el producto
             }
 
-            var productos = await _controlGastosAPI.GetProductosAsync();
-            ViewBag.Productos = new SelectList(productos, "Id", "Nombre");
+            var productos = await _controlGastosAPI.GetProductosAsync();    // Obtener productos desde la API
+            ViewBag.Productos = new SelectList(productos, "Id", "Nombre");// Crear lista de productos
             return View(productoDto);
         }
 
+        // Acción para eliminar un producto.
         public async Task<IActionResult> Delete(int id)
         {
-            var producto = await _controlGastosAPI.GetProductosAsync(id);
+            var producto = await _controlGastosAPI.GetProductosAsync(id);// Obtener producto desde la API
 
             if (producto == null)
             {
@@ -147,16 +155,18 @@ namespace CGASTOSFE.Controllers
             return View(producto);
         }
 
+        // Acción para eliminar un producto.
+
         [HttpPost, ActionName("DeleteConfirmed")]
         [ValidateAntiForgeryToken]
 
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var success = await _controlGastosAPI.DeleteProductosAsync(id);
+            var success = await _controlGastosAPI.DeleteProductosAsync(id);// Eliminar producto en la API
 
             if (success)
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));// Redirigir a la lista de productos
             }
 
             return RedirectToAction(nameof(Index));
